@@ -104,3 +104,55 @@ tailwind.config.js
 ```sh
 npm i axios dayjs @reduxjs/toolkit @tanstack/react-query @tanstack/react-query-devtools react-icons react-redux react-router-dom react-toastify
 ```
+
+## 2 - Create All Pages
+
+- create pages directory
+- create all pages and export from index.js
+- About, Cart, Checkout, Error,
+  HomeLayout, Landing, Login, Orders,
+  Products, Register, SingleProduct
+- import in app.jsx
+
+pages/About.jsx
+
+```js
+const About = () => {
+  return <h1 className="text-4xl">About</h1>;
+};
+export default About;
+```
+
+pages/index.js
+
+```js
+export { default as HomeLayout } from "./HomeLayout";
+export { default as Landing } from "./Landing";
+export { default as SingleProduct } from "./SingleProduct";
+export { default as Products } from "./Products";
+export { default as Cart } from "./Cart";
+export { default as Error } from "./Error";
+export { default as About } from "./About";
+export { default as Login } from "./Login";
+export { default as Register } from "./Register";
+export { default as Checkout } from "./Checkout";
+export { default as Orders } from "./Orders";
+```
+
+App.jsx
+
+```js
+import {
+  HomeLayout,
+  Landing,
+  Error,
+  Products,
+  SingleProduct,
+  Cart,
+  About,
+  Register,
+  Login,
+  Checkout,
+  Orders,
+} from "./pages";
+```
