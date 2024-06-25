@@ -156,3 +156,107 @@ import {
   Orders,
 } from "./pages";
 ```
+
+## 3 - React Router
+
+- configure react router
+- setup initial route structure
+  hint : look for nested UI (basically navbar)
+
+### App.jsx
+
+1. Import Dependencies:
+
+   - Import necessary modules from the 'react-router-dom' library.
+
+2. Create Router Configuration:
+
+   - Use the `createBrowserRouter` function to set up a router configuration.
+   - Define an array of route objects, each representing a different route in your application.
+   - Configure routes for different paths, including components like `HomeLayout`, `Landing`, `Products`, etc.
+
+3. Create Router Instance:
+
+   - Create a router instance using the `createBrowserRouter` function and pass in the defined route configuration.
+
+4. Define App Component:
+
+   - Create a functional component named `App`.
+   - Return a `RouterProvider` component and pass in the created router instance as a prop.
+
+5. Export App Component:
+   - Export the `App` component as the default export of the module.
+
+App.jsx
+
+```js
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomeLayout />,
+    errorElement: <Error />,
+    children: [
+      {
+        index: true,
+        element: <Landing />,
+      },
+      {
+        path: "products",
+        element: <Products />,
+      },
+      {
+        path: "products/:id",
+        element: <SingleProduct />,
+      },
+      {
+        path: "cart",
+        element: <Cart />,
+      },
+      { path: "about", element: <About /> },
+      {
+        path: "checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "orders",
+        element: <Orders />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+    errorElement: <Error />,
+  },
+]);
+
+const App = () => {
+  return <RouterProvider router={router} />;
+};
+export default App;
+```
+
+HomeLayout.jsx
+
+```js
+import { Outlet } from "react-router-dom";
+
+const HomeLayout = () => {
+  return (
+    <>
+      <nav>
+        <span className="text-4xl text-primary">Comfy</span>
+      </nav>
+      <Outlet />
+    </>
+  );
+};
+export default HomeLayout;
+```
