@@ -260,3 +260,74 @@ const HomeLayout = () => {
 };
 export default HomeLayout;
 ```
+
+## 4 - Error Page
+
+- complete error page
+- create two returns
+- first for 404 errors
+- second for all other errors
+- log the error
+- add option to navigate home
+
+### Error.jsx
+
+1. Import Dependencies:
+
+   - Import the necessary modules `useRouteError` and `Link` from the 'react-router-dom' library.
+
+2. Create Error Component:
+
+   - Define a functional component named `Error`.
+   - Inside the component, use the `useRouteError` hook to get information about the route error.
+   - Check the status of the error using `error.status`.
+
+3. Conditional Rendering for 404 Error:
+
+   - If the error status is 404, render a `main` element with a grid layout and centered content.
+   - Display a large "404" text, a title "Page not found," and a description.
+   - Include a link back to the home page using the `Link` component.
+
+4. Conditional Rendering for Other Errors:
+
+   - If the error status is not 404, render a `main` element with a grid layout and centered content.
+   - Display a text message indicating that there was an error.
+
+5. Export Error Component:
+   - Export the `Error` component as the default export of the module.
+
+Error.jsx
+
+```js
+import { useRouteError, Link } from "react-router-dom";
+const Error = () => {
+  const error = useRouteError();
+  console.log(error);
+  if (error.status === 404)
+    return (
+      <main className="grid min-h-[100vh] place-items-center px-8 ">
+        <div className="text-center">
+          <p className="text-9xl font-semibold text-primary">404</p>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
+            Page not found
+          </h1>
+          <p className="mt-6 text-lg leading-7 ">
+            Sorry, we couldn’t find the page you’re looking for.
+          </p>
+          <div className="mt-10 ">
+            <Link to="/" className="btn btn-secondary">
+              Go back home
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+
+  return (
+    <main className="grid min-h-[100vh] place-items-center px-8 ">
+      <h4 className="text-center font-bold text-4xl">there was an error... </h4>
+    </main>
+  );
+};
+export default Error;
+```
