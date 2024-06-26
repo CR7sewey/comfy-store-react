@@ -331,3 +331,65 @@ const Error = () => {
 };
 export default Error;
 ```
+
+## 5 - Input Field Component
+
+- create components folder with index.js
+- in daisyui
+- find Text input component
+- more specifically "With form-control and labels"
+- set it as component (in my case FormInput.jsx)
+- decide on props
+- export from index.js
+- test in login
+
+### FormInput.jsx
+
+1. Create FormInput Component:
+
+   - Define a functional component named `FormInput`.
+   - The component accepts the following props: `label`, `name`, `type`, and `defaultValue`.
+
+2. FormInput Structure:
+
+   - Inside the component, return a `div` element with the class `form-control`, which provides styling for form inputs.
+   - Within this `div`, create a `label` element with the class `label`.
+   - Inside the `label`, use the `label-text` class to display the capitalized label text provided through the props.
+
+3. Input Element:
+
+   - After the `label`, create an `input` element.
+   - Set the `type` attribute of the `input` element to the value provided through the `type` prop.
+   - Set the `name` attribute of the `input` element to the value provided through the `name` prop.
+   - Use the `defaultValue` prop to set the initial value of the input element.
+   - Apply the `input` and `input-bordered` classes to the `input` element for styling.
+
+4. Export FormInput Component:
+   - Export the `FormInput` component as the default export of the module.
+
+components/index.js
+
+```js
+export { default as FormInput } from "./FormInput";
+```
+
+FormInput.jsx
+
+```js
+const FormInput = ({ label, name, type, defaultValue }) => {
+  return (
+    <div className="form-control ">
+      <label className="label">
+        <span className="label-text capitalize">{label}</span>
+      </label>
+      <input
+        type={type}
+        name={name}
+        defaultValue={defaultValue}
+        className="input input-bordered "
+      />
+    </div>
+  );
+};
+export default FormInput;
+```
