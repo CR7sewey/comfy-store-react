@@ -393,3 +393,156 @@ const FormInput = ({ label, name, type, defaultValue }) => {
 };
 export default FormInput;
 ```
+
+## 6 - Login Page Structure
+
+- setup structure for login page (use complete project as reference)
+- check for loading state and disable submit button
+- setup submit button in a separate component
+- add loading spinner
+
+### SubmitBtn.jsx
+
+- Import Dependencies:
+
+  - Import `useNavigation` from `'react-router-dom'`.
+
+- Create the `SubmitBtn` Component:
+
+  - Define a functional component named `SubmitBtn`.
+  - Accept a prop `text`.
+
+  - Inside the component, use the `useNavigation()` hook to access navigation state.
+  - Determine whether the form is submitting by checking if `navigation.state` is equal to `'submitting'`.
+
+  - Return a `button` element with the following attributes:
+
+    - Type set to `'submit'`.
+    - Class set to `'btn btn-primary btn-block'`.
+    - Disabled attribute set to the value of `isSubmitting`.
+
+    - Inside the `button` element, use a conditional rendering:
+      - If `isSubmitting` is true:
+        - Render a `span` element with class `'loading loading-spinner'`.
+        - Render the text `'sending...'`.
+      - If `isSubmitting` is false:
+        - Render the `text` prop if provided, otherwise render `'submit'`.
+
+### Login.jsx
+
+- Import Dependencies:
+
+  - Import `FormInput` and `SubmitBtn` components from the `'../components'` directory.
+  - Import `Form` and `Link` from `'react-router-dom'`.
+
+- Create the `Login` Component:
+
+  - Define a functional component named `Login`.
+
+  - Return a `section` element with class `'h-screen grid place-items-center'`.
+
+    - Inside the `section` element, create a `Form` element with the following attributes:
+
+      - `method` set to `'post'`.
+      - Class set to `'card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4'`.
+
+      - Inside the `Form` element, create an `h4` element with class `'text-center text-3xl font-bold'` containing the text `'Login'`.
+
+      - Use the `FormInput` component twice:
+
+        - First, for an email input with type `'email'`, label `'email'`, name `'identifier'`, and defaultValue `'test@test.com'`.
+        - Second, for a password input with type `'password'`, label `'password'`, name `'password'`, and defaultValue `'secret'`.
+
+      - Create a `div` element with class `'mt-4'`.
+
+        - Inside the `div` element, use the `SubmitBtn` component with a prop `text` set to `'login'`.
+
+      - Create a `button` element with the following attributes:
+
+        - Type set to `'button'`.
+        - Class set to `'btn btn-secondary btn-block'`.
+        - Text content set to `'guest user'`.
+
+      - Create a `p` element with class `'text-center'`.
+
+        - Inside the `p` element, display the text `'Not a member yet?'`.
+
+        - Create a `Link` element with the following attributes:
+          - `to` set to `'/register'`.
+          - Class set to `'ml-2 link link-hover link-primary capitalize'`.
+          - Text content set to `'register'`.
+
+Login.jsx
+
+```js
+import { FormInput, SubmitBtn } from "../components";
+import { Form, Link } from "react-router-dom";
+
+const Login = () => {
+  return (
+    <section className="h-screen grid place-items-center">
+      <Form
+        method="post"
+        className="card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4"
+      >
+        <h4 className="text-center text-3xl font-bold">Login</h4>
+        <FormInput
+          type="email"
+          label="email"
+          name="identifier"
+          defaultValue="test@test.com"
+        />
+        <FormInput
+          type="password"
+          label="password"
+          name="password"
+          defaultValue="secret"
+        />
+        <div className="mt-4">
+          <SubmitBtn text="login" />
+        </div>
+        <button type="button" className="btn btn-secondary btn-block">
+          guest user
+        </button>
+        <p className="text-center">
+          Not a member yet?
+          <Link
+            to="/register"
+            className="ml-2 link link-hover link-primary capitalize"
+          >
+            register
+          </Link>
+        </p>
+      </Form>
+    </section>
+  );
+};
+export default Login;
+```
+
+SubmitBtn.jsx
+
+```js
+import { useNavigation } from "react-router-dom";
+const SubmitBtn = ({ text }) => {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  return (
+    <button
+      type="submit"
+      className="btn btn-primary btn-block"
+      disabled={isSubmitting}
+    >
+      {isSubmitting ? (
+        <>
+          <span className="loading loading-spinner"></span>
+          sending...
+        </>
+      ) : (
+        text || "submit"
+      )}
+    </button>
+  );
+};
+export default SubmitBtn;
+```
