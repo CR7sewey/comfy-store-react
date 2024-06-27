@@ -626,3 +626,25 @@ const Register = () => {
 };
 export default Register;
 ```
+
+## 8 - Custom Class
+
+- create custom class
+- align content
+- add to HomeLayout Outlet component
+
+index.css
+
+```css
+@layer components {
+  .align-element {
+    @apply mx-auto max-w-6xl px-8;
+  }
+}
+```
+
+```js
+<section className="align-element py-20">
+  <Outlet />
+</section>
+```
