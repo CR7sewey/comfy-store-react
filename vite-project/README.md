@@ -704,3 +704,109 @@ const Header = () => {
 };
 export default Header;
 ```
+
+## 10 - Navbar Structure
+
+- create components/Navbar.jsx
+- setup initial structure
+- use Daisy navbar component
+- "# responsive (dropdown menu on small screen, center menu on large screen)"
+- import icons from react-icons
+- render in HomeLayout.jsx
+
+### Navbar.jsx
+
+- Import Dependencies:
+
+  - Import icons `BsCart3`, `BsMoonFill`, `BsSunFill`, and `FaBarsStaggered` from their respective packages.
+  - Import `NavLink` from `'react-router-dom'`.
+
+- Create the `Navbar` Component:
+
+  - Define a functional component named `Navbar`.
+
+  - Return a `nav` element with class `'bg-base-200'`.
+
+    - Inside the `nav` element, create a `div` element with class `'navbar align-element '`.
+
+      - Inside the first `div` element, create another `div` element with class `'navbar-start'`.
+
+        - Create a `NavLink` to `'/'` with the following attributes:
+
+          - Class set to `'hidden lg:flex btn btn-primary text-3xl items-center '`.
+
+        - Create a `div` element with class `'dropdown'`.
+
+          - Create a `label` element with `tabIndex={0}` and class `'btn btn-ghost lg:hidden'`.
+
+          - Create a `ul` element with `tabIndex={0}` and class `'menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52'`.
+
+      - Inside the second `div` element, create a `div` element with class `'navbar-center hidden lg:flex'`.
+
+        - Create a `ul` element with class `'menu menu-horizontal '`.
+
+      - Inside the third `div` element, create another `div` element with class `'navbar-end'`.
+
+        - Create a `NavLink` to `'cart'` with the following attributes:
+
+          - Class set to `'btn btn-ghost btn-circle btn-md ml-4'`.
+
+          - Inside the `NavLink`, create a `div` element with class `'indicator'`.
+
+            - Add the `BsCart3` icon component with class `'h-6 w-6'`.
+
+            - Create a `span` element with classes `'badge badge-sm badge-primary indicator-item'` and text content `'8'`.
+
+## Navbar Structure
+
+```js
+import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
+import { FaBarsStaggered } from "react-icons/fa6";
+import { NavLink } from "react-router-dom";
+
+const Navbar = () => {
+  return (
+    <nav className="bg-base-200">
+      <div className="navbar align-element ">
+        <div className="navbar-start">
+          {/* Title */}
+          <NavLink
+            to="/"
+            className="hidden lg:flex btn btn-primary text-3xl items-center "
+          >
+            C
+          </NavLink>
+          {/* DROPDOWN */}
+          <div className="dropdown">
+            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+              <FaBarsStaggered className="h-6 w-6" />
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52"
+            >
+              nav links
+            </ul>
+          </div>
+        </div>
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal ">nav links</ul>
+        </div>
+        <div className="navbar-end">
+          {/* THEME ICONS */}
+          {/* CART LINK*/}
+          <NavLink to="cart" className="btn btn-ghost btn-circle btn-md ml-4">
+            <div className="indicator">
+              <BsCart3 className="h-6 w-6" />
+              <span className="badge badge-sm badge-primary indicator-item">
+                8
+              </span>
+            </div>
+          </NavLink>
+        </div>
+      </div>
+    </nav>
+  );
+};
+export default Navbar;
+```
