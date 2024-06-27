@@ -546,3 +546,83 @@ const SubmitBtn = ({ text }) => {
 };
 export default SubmitBtn;
 ```
+
+## 7 - Register Page Structure
+
+- setup structure for register page
+
+### Register.jsx
+
+- Import Dependencies:
+
+  - Import `FormInput` and `SubmitBtn` components from the `'../components'` directory.
+  - Import `Form` and `Link` from `'react-router-dom'`.
+
+- Create the `Register` Component:
+
+  - Define a functional component named `Register`.
+
+  - Return a `section` element with class `'h-screen grid place-items-center'`.
+
+    - Inside the `section` element, create a `Form` element with the following attributes:
+
+      - `method` set to `'POST'`.
+      - Class set to `'card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4'`.
+
+      - Inside the `Form` element, create an `h4` element with class `'text-center text-3xl font-bold'` containing the text `'Register'`.
+
+      - Use the `FormInput` component three times:
+
+        - First, for a text input with type `'text'`, label `'username'`, and name `'username'`.
+        - Second, for an email input with type `'email'`, label `'email'`, and name `'email'`.
+        - Third, for a password input with type `'password'`, label `'password'`, and name `'password'`.
+
+      - Create a `div` element with class `'mt-4'`.
+
+        - Inside the `div` element, use the `SubmitBtn` component with a prop `text` set to `'register'`.
+
+      - Create a `p` element with class `'text-center'`.
+
+        - Inside the `p` element, display the text `'Already a member?'`.
+
+        - Create a `Link` element with the following attributes:
+          - `to` set to `'/login'`.
+          - Class set to `'ml-2 link link-hover link-primary capitalize'`.
+          - Text content set to `'login'`.
+
+## Solution (8) - Register Page Structure
+
+```js
+import { FormInput, SubmitBtn } from "../components";
+import { Form, Link } from "react-router-dom";
+
+const Register = () => {
+  return (
+    <section className="h-screen grid place-items-center">
+      <Form
+        method="POST"
+        className="card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4"
+      >
+        <h4 className="text-center text-3xl font-bold">Register</h4>
+        <FormInput type="text" label="username" name="username" />
+        <FormInput type="email" label="email" name="email" />
+        <FormInput type="password" label="password" name="password" />
+        <div className="mt-4">
+          <SubmitBtn text="register" />
+        </div>
+
+        <p className="text-center">
+          Already a member?
+          <Link
+            to="/login"
+            className="ml-2 link link-hover link-primary capitalize"
+          >
+            login
+          </Link>
+        </p>
+      </Form>
+    </section>
+  );
+};
+export default Register;
+```
