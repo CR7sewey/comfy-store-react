@@ -810,3 +810,69 @@ const Navbar = () => {
 };
 export default Navbar;
 ```
+
+## 11 - NavLinks
+
+- create NavLinks component
+- setup an array of links
+- iterate over and setup return
+
+### Navbar.jsx
+
+- Import Dependencies:
+
+  - Import `NavLink` from `'react-router-dom'`.
+
+- Create the NavLinks Component:
+
+  - Define a functional component named `NavLinks`.
+
+  - Return a fragment (`<>...</>`) to contain the list of navigation links.
+
+    - Use the `.map()` function to iterate over the `links` array.
+
+      - For each `link` object, extract the `id`, `url`, and `text`.
+
+      - Create an `li` element with a `key` attribute set to `id`.
+
+        - Inside the `li` element, create a `NavLink` with the following attributes:
+
+          - Class set to `'capitalize'`.
+
+          - `to` attribute set to the `url`.
+
+          - Text content set to the `text`.
+
+## NavLinks
+
+NavLinks.jsx
+
+```js
+const links = [
+  { id: 1, url: "/", text: "home" },
+  { id: 2, url: "about", text: "about" },
+  { id: 3, url: "products", text: "products" },
+  { id: 4, url: "cart", text: "cart" },
+  { id: 5, url: "checkout", text: "checkout" },
+  { id: 6, url: "orders", text: "orders" },
+];
+import { NavLink } from "react-router-dom";
+
+const NavLinks = () => {
+  return (
+    <>
+      {links.map((link) => {
+        const { id, url, text } = link;
+        return (
+          <li key={id}>
+            <NavLink className="capitalize" to={url}>
+              {text}
+            </NavLink>
+          </li>
+        );
+      })}
+    </>
+  );
+};
+export default NavLinks;
+```
