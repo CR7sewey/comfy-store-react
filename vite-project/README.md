@@ -917,3 +917,59 @@ tailwind.config.cjs
 ```html
 <html lang="en" data-theme="winter"></html>
 ```
+
+## 13 - Change Theme
+
+- change theme with toggle component
+
+### Navbar.jsx
+
+- Import Dependencies:
+
+  - Import `useEffect` and `useState` from `'react'`.
+
+- Theme Configuration:
+
+  - Define a `themes` object with theme names as keys.
+
+- Local Storage Theme Retrieval:
+
+  - Create a function named `getThemeFromLocalStorage`.
+    - Return the value of the `'theme'` key from `localStorage` or the default theme `'winter'`.
+
+- Logic:
+
+  - Create a state variable `theme` using the `useState` hook and initialize it with the result of `getThemeFromLocalStorage()`.
+  - Define a function `handleTheme` that toggles between the `'winter'` and `'dracula'` themes based on the current theme.
+  - Use the `useEffect` hook to apply the selected theme to the `document.documentElement` and store the theme value in `localStorage`.
+  - ... (rest of the component implementation)
+
+```js
+import { useEffect, useState } from 'react';
+
+const themes = {
+  winter: 'winter',
+  dracula: 'dracula',
+};
+
+const getThemeFromLocalStorage = () => {
+  return localStorage.getItem('theme') || themes.winter;
+};
+
+const Navbar = () => {
+  const [theme, setTheme] = useState(getThemeFromLocalStorage());
+
+  const handleTheme = () => {
+    const { winter, dracula } = themes;
+    const newTheme = theme === winter ? dracula : winter;
+    setTheme(newTheme);
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  ...
+};
+```

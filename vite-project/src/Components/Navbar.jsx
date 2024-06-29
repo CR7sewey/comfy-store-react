@@ -1,12 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
 import Navlinks from "./Navlinks";
 import Swap from "./Swap";
 
+const themes = ["winter", "dracula"];
+
+const getThemeFromLocalStorage = () => {
+  return localStorage.getItem("theme") || "winter";
+};
+
 const Navbar = () => {
-  const [theme, handleTheme] = useState(false);
+  const [theme, handleTheme] = useState(getThemeFromLocalStorage());
+
+  const toggleTheme = () => {
+    const new_theme = theme === "winter" ? "dracula" : "winter";
+    handleTheme(new_theme);
+    //changeTheme(theme);
+    //localStorage.setItem("theme", new_theme);
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    console.log(document.documentElement);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   return (
     <nav className="bg-base-200">
@@ -37,7 +56,7 @@ const Navbar = () => {
           <div className="navbar-end">
             <label className="swap swap-rotate ">
               {/* this hidden checkbox controls the state */}
-              <input type="checkbox" onChange={() => handleTheme(!theme)} />
+              <input type="checkbox" onChange={toggleTheme} />
 
               {/* sun icon */}
               <BsSunFill className="swap-on h-4 w-4" />
