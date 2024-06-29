@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
 import Navlinks from "./Navlinks";
+import Swap from "./Swap";
 
 const Navbar = () => {
+  const [theme, handleTheme] = useState(false);
+
   return (
     <nav className="bg-base-200">
       <div className="navbar align-element ">
@@ -30,6 +33,18 @@ const Navbar = () => {
             <ul className="menu menu-horizontal">
               <Navlinks />
             </ul>
+          </div>
+          <div className="navbar-end">
+            <label className="swap swap-rotate ">
+              {/* this hidden checkbox controls the state */}
+              <input type="checkbox" onChange={() => handleTheme(!theme)} />
+
+              {/* sun icon */}
+              <BsSunFill className="swap-on h-4 w-4" />
+
+              {/* moon icon */}
+              <BsMoonFill className="swap-off h-4 w-4" />
+            </label>
           </div>
           <div className="navbar-end">
             {/* THEME ICONS */}
