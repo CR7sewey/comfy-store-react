@@ -1351,3 +1351,22 @@ const ProductsGrid = () => {
 };
 export default ProductsGrid;
 ```
+
+## 20 - Format Price
+
+- payment providers need in smallest unit
+  - in this case cents
+- in utils setup a function to format price
+- utilize in ProductsGrid
+
+- utils/index.js
+
+```js
+export const formatPrice = (price) => {
+  const dollarsAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format((price / 100).toFixed(2));
+  return dollarsAmount;
+};
+```
