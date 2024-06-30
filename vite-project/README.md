@@ -1019,3 +1019,76 @@ const About = () => {
 };
 export default About;
 ```
+
+## 15 - Hero Component
+
+- setup hero component in landing page
+
+### Hero.jsx
+
+- Import Dependencies:
+
+  - Import `Link` from `'react-router-dom'`.
+
+- Hero Component:
+  - Define the `Hero` component.
+    - Create an array `carouselImages` containing imported image paths.
+    - Return a `div` with classes `grid`, `grid-cols-1`, `lg:grid-cols-2`, `gap-24`, and `items-center`.
+      - Inside this `div`, another `div`.
+        - Inside this `div`, an `h1` with classes `max-w-2xl`, `text-4xl`, `font-bold`, and `tracking-tight`, containing the text "We’re changing the way people shop."
+        - Next, a `p` element with classes `mt-8`, `max-w-xl`, `text-lg`, and `leading-8`, containing sample Lorem ipsum text.
+        - Following that, a `div` with class `mt-10`.
+          - Inside the `div`, a `Link` component with props `to='products'` and classes `btn` and `btn-primary`, containing the text "Our Products".
+      - Another `div` with classes `hidden`, `h-[28rem]`, `lg:carousel`, `carousel-center`, `p-4`, `space-x-4`, `bg-neutral`, and `rounded-box`.
+        - Inside this `div`, a JavaScript map function iterating over `carouselImages`.
+          - For each image, a `div` with class `carousel-item`.
+            - Inside the `div`, an `img` element with attributes `src` set to the image path and classes `rounded-box`, `h-full`, `w-80`, and `object-cover`.
+
+Hero.jsx
+
+```js
+import { Link } from "react-router-dom";
+
+import hero1 from "../assets/hero1.webp";
+import hero2 from "../assets/hero2.webp";
+import hero3 from "../assets/hero3.webp";
+import hero4 from "../assets/hero4.webp";
+
+const carouselImages = [hero1, hero2, hero3, hero4];
+const Hero = () => {
+  return (
+    <div className=" grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+      <div>
+        <h1 className="max-w-2xl text-4xl font-bold tracking-tight  sm:text-6xl ">
+          We’re changing the way people shop.
+        </h1>
+
+        <p className="mt-8 max-w-xl text-lg leading-8">
+          Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem
+          cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat
+          aliqua. Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure
+          qui lorem cupidatat commodo.
+        </p>
+        <div className="mt-10 ">
+          <Link to="products" className="btn btn-primary ">
+            Our Products
+          </Link>
+        </div>
+      </div>
+      <div className="hidden  h-[28rem] lg:carousel carousel-center   p-4 space-x-4 bg-neutral rounded-box">
+        {carouselImages.map((image, index) => {
+          return (
+            <div key={image} className="carousel-item">
+              <img
+                src={image}
+                className="rounded-box h-full w-80  object-cover"
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+export default Hero;
+```
