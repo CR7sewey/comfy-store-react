@@ -1571,3 +1571,48 @@ export const generateAmountOptions = (number) => {
 Array.from({ length: number }, (_, index) => { ... }): This part uses the Array.from method to create an array of a specific length, determined by the number parameter. The second argument of the Array.from method is a callback function that will be invoked for each element in the array. The underscore (_) is a placeholder for the current element (which we don't need in this case), and index is the index of the current element.
 
 const amount = index + 1;: Inside the callback function, this line calculates the amount value based on the index. Since the index starts from 0 but you want amount to start from 1, you add 1 to the index.
+
+## 22 - Products Page (Setup)
+
+- create following components and render in products page
+  - Filters
+  - ProductsContainer
+  - PaginationContainer
+- in products page loader fetch all products
+
+### Products.jsx
+
+1. Import Dependencies:
+
+   - Import `Filters`, `PaginationContainer`, and `ProductsContainer` from `'../components'`.
+   - Import `customFetch` from `'../utils'`.
+
+2. Define URL and Loader Function:
+
+   - Define a constant `url` containing the URL path to fetch products from.
+   - Define a loader function that fetches product data from the defined URL.
+   - Use `customFetch` to fetch the product data from the `url`.
+   - Extract products and meta information from the response and return them.
+
+3. Create Products Component:
+
+   - Define a functional component named `Products`.
+
+4. Component Structure:
+
+   - Return a `Fragment` element (`<>...</>`) to wrap the component content.
+
+5. Filters Component:
+
+   - Include the `Filters` component to allow users to apply filters to the product list.
+
+6. ProductsContainer Component:
+
+   - Include the `ProductsContainer` component to display the list of products.
+
+7. PaginationContainer Component:
+
+   - Include the `PaginationContainer` component to manage product list pagination.
+
+8. Export Products Component:
+   - Export the `Products` component as the default export of the module.

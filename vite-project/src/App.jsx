@@ -21,6 +21,7 @@ import {
 } from "react-router-dom";
 import { loader as landingLoader } from "./Pages/Landing";
 import { loader as singleProduct } from "./Pages/SingleProduct";
+import { loader as allProducts } from "./Pages/Products";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <Products />,
+        loader: allProducts,
       },
       {
         path: "products/:id",
