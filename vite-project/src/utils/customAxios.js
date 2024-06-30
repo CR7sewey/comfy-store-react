@@ -1,7 +1,7 @@
 import axios from "axios";
 const url = "https://strapi-store-server.onrender.com/api";
 
-const authFetch = axios.create({
+const comfFetch = axios.create({
   baseURL: url,
   /*headers: {
     Accept: "application/json",
@@ -9,7 +9,7 @@ const authFetch = axios.create({
   },*/
 });
 
-authFetch.interceptors.request.use(
+comfFetch.interceptors.request.use(
   (request) => {
     // old version
     // request.headers.common['Accept'] = 'application/json';
@@ -23,4 +23,4 @@ authFetch.interceptors.request.use(
   }
 );
 
-export default authFetch;
+export default comfFetch;

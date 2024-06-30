@@ -1,7 +1,22 @@
 import React from "react";
 import Hero from "../Components/Hero";
+import comfFetch from "../utils/customAxios";
+import { useLoaderData } from "react-router-dom";
+
+export const loader = async () => {
+  try {
+    const data = await comfFetch.get("/products?featured=true");
+    const products = data.data.data;
+    return { products };
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
+};
 
 const Landing = () => {
+  const { products } = useLoaderData();
+  console.log(products);
   return (
     <>
       <Hero />
