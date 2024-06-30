@@ -2,6 +2,7 @@ import React from "react";
 import Hero from "../Components/Hero";
 import comfFetch from "../utils/customAxios";
 import { useLoaderData } from "react-router-dom";
+import FeaturedProducts from "../Components/FeaturedProducts";
 
 export const loader = async () => {
   try {
@@ -20,6 +21,7 @@ const Landing = () => {
   return (
     <>
       <Hero />
+      <FeaturedProducts products={products} />
     </>
   );
 };
