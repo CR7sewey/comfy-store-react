@@ -16,12 +16,12 @@ export const loader = async () => {
 };
 
 const Landing = () => {
-  const { products } = useLoaderData();
-  console.log(products);
+  //const { products } = useLoaderData();
+  //console.log(products);
   return (
     <>
       <Hero />
-      <FeaturedProducts products={products} />
+      <FeaturedProducts />
     </>
   );
 };
