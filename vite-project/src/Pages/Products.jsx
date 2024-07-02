@@ -1,22 +1,22 @@
-import React from "react";
 import comfFetch from "../utils/customAxios";
-import { useLoaderData } from "react-router-dom";
 import Filters from "../Components/Filters";
+import ProductsContainer from "../Components/ProductsContainer";
+import PaginationContainer from "../Components/PaginationContainer";
 
-export const loader = async () => {
-  const data = await comfFetch.get(
-    "https://strapi-store-server.onrender.com/api/products"
-  );
-  console.log(data);
-  return { products: data.data };
+export const loader = async ({ request }) => {
+  const response = await comfFetch.get("/products");
+
+  const products = response.data.data;
+  const meta = response.data.meta;
+  return { products, meta };
 };
 
 const Products = () => {
-  const { products } = useLoaderData();
-  console.log(products, "estes");
   return (
     <>
       <Filters />
+      <ProductsContainer />
+      <PaginationContainer />
     </>
   );
 };

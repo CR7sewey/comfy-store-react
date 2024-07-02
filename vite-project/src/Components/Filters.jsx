@@ -4,8 +4,11 @@ import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
 import FormRange from "./FormRange";
 import FormCheckbox from "./FormCheckbox";
+import { useLoaderData } from "react-router-dom";
 
 const Filters = () => {
+  const { meta } = useLoaderData();
+
   // GET
   return (
     <Form className="bg-base-200 rounded-md px-8 py-4 grid gap-x-4  gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center">
@@ -19,14 +22,14 @@ const Filters = () => {
       <FormSelect
         label="Select Category"
         name="category"
-        list={["a", "b"]}
+        list={meta.categories}
         size="select-sm"
         defaultValue=""
       />
       <FormSelect
         label="Select Company"
         name="company"
-        list={["a", "b"]}
+        list={meta.companies}
         size="select-sm"
         defaultValue=""
       />
