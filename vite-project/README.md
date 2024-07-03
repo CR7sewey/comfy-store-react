@@ -2281,3 +2281,119 @@ const HomeLayout = () => {
 };
 export default HomeLayout;
 ```
+
+## 29 - Setup Params
+
+- explore how to filter products
+  [API DOCS](https://documenter.getpostman.com/view/18152321/2s9Xy5KpTi#80a47ff5-cc24-494b-89e0-02cd92acc226)
+- test in Thunder Client
+- access params in loader
+- use params in customFetch
+- pass params down
+- use params as default values (price in FormRange)
+- setup reset button
+
+- NOTE: when submiting filters, since is a get Form, the params comes in the url
+
+## Setup Params
+
+Products.jsx
+
+```js
+export const loader = async ({ request }) => {
+  const params = Object.fromEntries([
+    ...new URL(request.url).searchParams.entries(),
+  ]);
+  const response = await customFetch(url, { params });
+
+  const products = response.data.data;
+  const meta = response.data.meta;
+
+  return { products, meta, params };
+};
+```
+
+Filters.jsx
+
+```js
+import { Form, useLoaderData, Link } from "react-router-dom";
+import FormInput from "./FormInput";
+import FormSelect from "./FormSelect";
+import FormRange from "./FormRange";
+import FormCheckbox from "./FormCheckbox";
+const Filters = () => {
+  const { meta, params } = useLoaderData();
+  const { search, company, category, shipping, order, price } = params;
+  return (
+    <Form className="bg-base-200 rounded-md px-8 py-4 grid gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center">
+      {/* SEARCH */}
+      <FormInput
+        type="search"
+        label="search product"
+        name="search"
+        defaultValue={search}
+        size="input-sm"
+      />
+      {/* CATEGORIES */}
+      <FormSelect
+        label="select category"
+        name="category"
+        list={meta.categories}
+        defaultValue={category}
+        size="select-sm"
+      />
+      {/* COMPANIES */}
+      <FormSelect
+        label="select company"
+        name="company"
+        list={meta.companies}
+        defaultValue={company}
+        size="select-sm"
+      />
+      {/* ORDER */}
+      <FormSelect
+        label="sort by"
+        name="order"
+        list={["a-z", "z-a", "high", "low"]}
+        defaultValue={order}
+        size="select-sm"
+      />
+      {/* PRICE */}
+      <FormRange
+        label="select price"
+        name="price"
+        price={price}
+        size="range-sm"
+      />
+      {/* SHIPPING */}
+      <FormCheckbox
+        label="free shipping"
+        name="shipping"
+        defaultValue={shipping}
+        size="checkbox-sm"
+      />
+      {/* BUTTONS */}
+      <button type="submit" className="btn btn-primary btn-sm">
+        search
+      </button>
+      <Link to="/products" className="btn btn-accent btn-sm">
+        reset
+      </Link>
+    </Form>
+  );
+};
+export default Filters;
+```
+
+```js
+const params = Object.fromEntries([
+  ...new URL(request.url).searchParams.entries(),
+]);
+```
+
+It takes a URL string from the request.url property.
+It creates a URL object from that URL string.
+It extracts the query parameters using the searchParams property.
+It converts the query parameters into an iterable of key-value pairs using the entries() method.
+It spreads these key-value pairs into an array.
+It uses Object.fromEntries() to create a new object where the key-value pairs become properties of the object.
