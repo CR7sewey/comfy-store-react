@@ -1857,3 +1857,324 @@ const ProductsContainer = () => {
 
 export default ProductsContainer;
 ```
+
+## 24 - Filters (Search Input)
+
+- add size to prop FormInput.jsx
+- render search input, submit button and reset button
+
+## Filters (Search Input)
+
+FormInput.jsx
+
+```js
+const FormInput = ({ label, name, type, defaultValue, size }) => {
+  return (
+    <div className="form-control">
+      <label htmlFor={name} className="label">
+        <span className="label-text capitalize">{label}</span>
+      </label>
+      <input
+        type={type}
+        name={name}
+        defaultValue={defaultValue}
+        className={`input input-bordered ${size}`}
+      />
+    </div>
+  );
+};
+export default FormInput;
+```
+
+Filters.jsx
+
+```js
+import { Form, useLoaderData, Link } from "react-router-dom";
+import FormInput from "./FormInput";
+
+const Filters = () => {
+  return (
+    <Form className="bg-base-200 rounded-md px-8 py-4 grid gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center">
+      {/* SEARCH */}
+      <FormInput
+        type="search"
+        label="search product"
+        name="search"
+        size="input-sm"
+      />
+      {/* BUTTONS */}
+      <button type="submit" className="btn btn-primary btn-sm ">
+        search
+      </button>
+      <Link to="/products" className="btn btn-accent btn-sm">
+        reset
+      </Link>
+    </Form>
+  );
+};
+export default Filters;
+```
+
+## 25- Filters (Select Input)
+
+- setup input for select input
+- render for categories, companies and order
+- companies and categories values are located in meta
+
+### FormSelect.jsx
+
+1. Create FormSelect Component:
+
+   - Define a functional component named `FormSelect`.
+
+2. Component Structure:
+
+   - Return a `div` element containing the form select input.
+
+3. Props:
+
+   - Accept the following props: `label`, `name`, `list`, `defaultValue`, and `size`.
+
+4. Label:
+
+   - Create a `label` element with a `for` attribute matching the `name` prop.
+   - Display the capitalized label text using the `label` prop.
+
+5. Select Input:
+
+   - Create a `select` element for the input field.
+   - Set the `name` and `id` attributes to the value of the `name` prop.
+   - Apply the appropriate CSS classes for the select input using the `size` prop.
+   - Set the `defaultValue` of the select input using the `defaultValue` prop.
+
+6. Options:
+
+   - Map through the `list` prop array to generate individual `option` elements.
+   - Use each item in the `list` as the `key` and `value` attributes of the `option` element.
+
+7. Export FormSelect Component:
+   - Export the `FormSelect` component as the default export of the module.
+
+## Filters (Select Input)
+
+FormSelect.jsx
+
+```js
+const FormSelect = ({ label, name, list, defaultValue, size }) => {
+  return (
+    <div className="form-control">
+      <label htmlFor={name} className="label">
+        <span className="label-text capitalize">{label}</span>
+      </label>
+      <select
+        name={name}
+        id={name}
+        className={`select select-bordered ${size}`}
+        defaultValue={defaultValue}
+      >
+        {list.map((item) => {
+          return (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          );
+        })}
+      </select>
+    </div>
+  );
+};
+export default FormSelect;
+```
+
+Filters.jsx
+
+```js
+const { meta } = useLoaderData();
+
+{
+  /* CATEGORIES */
+}
+<FormSelect
+  label="select category"
+  name="category"
+  list={meta.categories}
+  size="select-sm"
+/>;
+{
+  /* COMPANIES */
+}
+<FormSelect
+  label="select company"
+  name="company"
+  list={meta.companies}
+  size="select-sm"
+/>;
+{
+  /* ORDER */
+}
+<FormSelect
+  label="sort by"
+  name="order"
+  list={["a-z", "z-a", "high", "low"]}
+  size="select-sm"
+/>;
+```
+
+## 26 - Filters (Price)
+
+- create range input (hint: you will need local state)
+
+### FormRange.jsx
+
+1. Create FormRange Component:
+
+   - Define a functional component named `FormRange`.
+
+2. Component Structure:
+
+   - Return a `div` element containing the form range input and related elements.
+
+3. Props:
+
+   - Accept the following props: `label`, `name`, and `size`.
+
+4. Default Values:
+
+   - Define default values for `step`, `maxPrice`, and `selectedPrice`.
+
+5. Label and Selected Price Display:
+
+   - Create a `label` element with a `for` attribute matching the `name` prop.
+   - Display the capitalized label text using the `label` prop.
+   - Display the selected price using the `formatPrice` function.
+
+6. Range Input:
+
+   - Create an `input` element with `type` set to `'range'`.
+   - Set the `name`, `min`, `max`, `value`, and `step` attributes.
+   - Use the `selectedPrice` state for the `value` attribute.
+   - Set the `onChange` event handler to update `selectedPrice`.
+
+7. Min and Max Price Display:
+
+   - Create a `div` element for displaying minimum and maximum price values.
+   - Use the `formatPrice` function for formatting and displaying max price.
+
+8. Export FormRange Component:
+   - Export the `FormRange` component as the default export of the module.
+
+## Filters (Price )
+
+FormRange.jsx
+
+```js
+import { formatPrice } from "../utils";
+import { useState } from "react";
+const FormRange = ({ label, name, size }) => {
+  const step = 1000;
+  const maxPrice = 100000;
+  const [selectedPrice, setSelectedPrice] = useState(maxPrice);
+
+  return (
+    <div className="form-control">
+      <label htmlFor={name} className="label cursor-pointer">
+        <span className="label-text capitalize">{label}</span>
+        <span>{formatPrice(selectedPrice)}</span>
+      </label>
+      <input
+        type="range"
+        name={name}
+        min={0}
+        max={maxPrice}
+        value={selectedPrice}
+        onChange={(e) => setSelectedPrice(e.target.value)}
+        className={`range range-primary ${size}`}
+        step={step}
+      />
+      <div className="w-full flex justify-between text-xs px-2 mt-2">
+        <span className="font-bold text-md">0</span>
+        <span className="font-bold text-md">Max : {formatPrice(maxPrice)}</span>
+      </div>
+    </div>
+  );
+};
+export default FormRange;
+```
+
+Filters.jsx
+
+```js
+{
+  /* PRICE */
+}
+<FormRange label="select price" name="price" size="range-sm" />;
+```
+
+## 27 - Filters (Shipping)
+
+- create checkbox input
+
+### FormCheckbox.jsx
+
+1. Create FormCheckbox Component:
+
+   - Define a functional component named `FormCheckbox`.
+
+2. Component Structure:
+
+   - Return a `div` element containing the form checkbox input and related elements.
+
+3. Props:
+
+   - Accept the following props: `label`, `name`, `defaultValue`, and `size`.
+
+4. Label Display:
+
+   - Create a `label` element with a `for` attribute matching the `name` prop.
+   - Display the capitalized label text using the `label` prop.
+
+5. Checkbox Input:
+
+   - Create an `input` element with `type` set to `'checkbox'`.
+   - Set the `name` attribute to match the `name` prop.
+   - Set the `defaultChecked` attribute using the `defaultValue` prop.
+   - Use the `size` prop to determine the checkbox size class.
+
+6. Styling and Layout:
+
+   - Apply appropriate classes to style and position the form control items.
+
+7. Export FormCheckbox Component:
+   - Export the `FormCheckbox` component as the default export of the module.
+
+## Filters (Shipping)
+
+FormCheckbox.jsx
+
+```js
+const FormCheckbox = ({ label, name, defaultValue, size }) => {
+  return (
+    <div className="form-control items-center">
+      <label htmlFor={name} className="label cursor-pointer">
+        <span className="label-text capitalize">{label}</span>
+      </label>
+      <input
+        type="checkbox"
+        name={name}
+        defaultChecked={defaultValue}
+        className={`checkbox checkbox-primary ${size}`}
+      />
+    </div>
+  );
+};
+export default FormCheckbox;
+```
+
+Filters.jsx
+
+```js
+{
+  /* SHIPPING */
+}
+<FormCheckbox label="free shipping" name="shipping" size="checkbox-sm" />;
+```
