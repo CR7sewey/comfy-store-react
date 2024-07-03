@@ -2178,3 +2178,106 @@ Filters.jsx
 }
 <FormCheckbox label="free shipping" name="shipping" size="checkbox-sm" />;
 ```
+
+## 28 - Global Loading
+
+- create loading component
+- check for loading state in HomeLayout
+- toggle between loading and <Outlet>
+
+### Loading.jsx
+
+1. Create Loading Component:
+
+   - Define a functional component named "Loading".
+
+2. Component Structure:
+
+   - Return a "div" element with CSS classes to center content both vertically and horizontally.
+
+3. Loading Animation:
+
+   - Inside the "div", include a "span" element with the classes "loading loading-ring loading-lg".
+   - This applies a loading animation to create the visual effect.
+
+4. Styling:
+
+   - Use the provided CSS classes to style the loading animation.
+
+5. Export Loading Component:
+   - Export the "Loading" component as the default export of the module.
+
+### HomeLayout.jsx
+
+1. Create HomeLayout Component:
+
+   - Define a functional component named "HomeLayout".
+
+2. Import Dependencies:
+
+   - Import "Outlet" and "useNavigation" from 'react-router-dom'.
+   - Import "Navbar", "Loading", and "Header" from '../components'.
+
+3. Component Structure:
+
+   - Return a fragment ('<>...</>') to encapsulate the component's content.
+
+4. UseNavigation Hook:
+
+   - Use the "useNavigation" hook to access the navigation state.
+   - Store whether the page is currently loading in "isPageLoading" variable.
+
+5. Conditional Rendering:
+
+   - Use a ternary operator to conditionally render content:
+     - If "isPageLoading" is true, render the "Loading" component.
+     - Otherwise, render a "section" element with CSS classes and include the "Outlet" component.
+
+6. Header and Navbar:
+
+   - Include the "Header" and "Navbar" components at the beginning of the component.
+
+7. Styling:
+
+   - Apply CSS classes to style the layout and align its elements.
+
+8. Export HomeLayout Component:
+   - Export the "HomeLayout" component as the default export of the module.
+
+## Global Loading
+
+Loading.jsx
+
+```js
+const Loading = () => {
+  return (
+    <div className="h-screen flex items-center justify-center">
+      <span className="loading loading-ring loading-lg" />
+    </div>
+  );
+};
+export default Loading;
+```
+
+```js
+import { Outlet, useNavigation } from "react-router-dom";
+import { Navbar, Loading, Header } from "../components";
+const HomeLayout = () => {
+  const navigation = useNavigation();
+  const isPageLoading = navigation.state === "loading";
+  return (
+    <>
+      <Header />
+      <Navbar />
+      {isPageLoading ? (
+        <Loading />
+      ) : (
+        <section className="align-element py-20">
+          <Outlet />
+        </section>
+      )}
+    </>
+  );
+};
+export default HomeLayout;
+```
