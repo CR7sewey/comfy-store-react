@@ -12,7 +12,7 @@ const ProductsGrid = () => {
         const { title, price, image } = prods.attributes;
         return (
           <Link
-            to={`products/${prods.id}`}
+            to={`/products/${prods.id}`}
             key={prods.id}
             className="card w-full  shadow-xl hover:shadow-2xl transition duration-300 "
           >
