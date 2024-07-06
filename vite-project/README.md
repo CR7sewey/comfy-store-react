@@ -2761,3 +2761,90 @@ cartSlice.js
     },
 }
 ```
+
+## 35 - Setup Cart Page
+
+- create CartItemsList, CartTotals, CartItem components
+- export CartItemsList, CartTotals in components/index.js
+- setup two column layout in cart page
+
+### CartPage.jsx
+
+1. **Initialize Necessary Imports**:
+
+   - Import `useSelector` from `react-redux` to enable access to the Redux store.
+   - Bring in `CartItemsList`, `SectionTitle`, and `CartTotals` components from the `components` directory.
+   - Import `Link` from `react-router-dom` for navigation capabilities.
+
+2. **Create Cart Component**:
+
+   - Define a functional component named `Cart`.
+
+3. **Initialize State and Variables**:
+
+   - Set a temporary variable `user` to `null`.
+   - Use the `useSelector` hook to retrieve `numItemsInCart` from the Redux store's `cartState`.
+
+4. **Component Logic**:
+
+   - Check if `numItemsInCart` is zero.
+     - If true, return the `SectionTitle` component with the text 'Your cart is empty'.
+     - If there are items in the cart, continue to display the cart details.
+
+5. **Component Structure**:
+
+   - Render the `SectionTitle` component with the text 'Shopping Cart'.
+   - Set up a grid layout (`mt-8 grid gap-8 lg:grid-cols-12`) to manage cart layout.
+   - For displaying cart items:
+     - Use 8 of 12 columns on large screens (`lg:col-span-8`).
+     - Insert the `CartItemsList` component.
+   - For displaying cart totals and the checkout/login button:
+     - Use 4 of 12 columns on large screens (`lg:col-span-4 lg:pl-4`).
+     - Place the `CartTotals` component.
+     - Check if `user` is defined:
+       - If true, provide a link to '/checkout' with the text 'Proceed to checkout'.
+       - If false, provide a link to '/login' with the text 'please login'.
+
+6. **Export Cart Component**:
+
+   - Export the `Cart` component as the default export of the module.
+
+pages/Cart.jsx
+
+```js
+import { useSelector } from "react-redux";
+import { CartItemsList, SectionTitle, CartTotals } from "../components";
+import { Link } from "react-router-dom";
+
+const Cart = () => {
+  // temp
+  const user = null;
+  const numItemsInCart = useSelector((state) => state.cartState.numItemsInCart);
+  if (numItemsInCart === 0) {
+    return <SectionTitle text="Your cart is empty" />;
+  }
+  return (
+    <>
+      <SectionTitle text="Shopping Cart" />
+      <div className="mt-8 grid gap-8  lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <CartItemsList />
+        </div>
+        <div className="lg:col-span-4 lg:pl-4">
+          <CartTotals />
+          {user ? (
+            <Link to="/checkout" className="btn btn-primary btn-block mt-8">
+              Proceed to checkout
+            </Link>
+          ) : (
+            <Link to="/login" className="btn btn-primary btn-block mt-8">
+              please login
+            </Link>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+export default Cart;
+```
