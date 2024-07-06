@@ -9,7 +9,7 @@ const initialState = {
   numItemsInCart: 0,
   cartTotal: 0,
   shipping: 500,
-  tax: 0.1,
+  tax: 0,
   ordercartTotal: 0,
 };
 
@@ -35,8 +35,10 @@ const getCartTotal = (state) => {
   state.cartItems.forEach((items) => {
     total += Number(items.amount) * Number(items.price);
   });
-  let ordercartTotal = state.total + state.shipping + total * state.tax;
-  return { total, ordercartTotal };
+  let tax = total * 0.1;
+  let ordercartTotal = total + state.shipping + tax;
+  console.log(ordercartTotal, "oct");
+  return { total, ordercartTotal, tax };
 };
 
 const getInitialState = () => {
@@ -60,9 +62,10 @@ const cartSlice = createSlice({
       }
 
       state.numItemsInCart += action.payload.amount;
-      const { total, ordercartTotal } = getCartTotal(state);
+      const { total, ordercartTotal, tax } = getCartTotal(state);
       state.ordercartTotal = ordercartTotal;
       state.cartTotal = total;
+      state.tax = tax;
 
       localStorage.setItem("cartItems", JSON.stringify(state));
       toast.success(`Item ${action.payload.cartID} added to the cart!`);

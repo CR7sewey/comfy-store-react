@@ -2848,3 +2848,81 @@ const Cart = () => {
 };
 export default Cart;
 ```
+
+## 36 - Cart Totals
+
+- setup cart totals component
+
+### CartTotals.jsx
+
+1. **Initialize Necessary Imports**:
+
+   - Import `useSelector` from `react-redux` for state retrieval from the Redux store.
+   - Bring in `formatPrice` function from the `utils` directory for price formatting.
+
+2. **Create CartTotals Component**:
+
+   - Define a functional component named `CartTotals`.
+
+3. **Retrieve State from Redux**:
+
+   - Use the `useSelector` hook to get `cartTotal`, `shipping`, `tax`, and `orderTotal` from the Redux store's `cartState`.
+
+4. **Component Structure**:
+
+   - Enclose all content inside a `div` with the class `card bg-base-200`.
+   - Use an inner `div` with the class `card-body` for structured content.
+   - Display the Subtotal:
+     - Use a `p` element with classes `flex`, `justify-between`, `text-xs`, `border-b`, and `border-base-300 pb-2`.
+     - Use two nested `span` elements. The first displays "Subtotal", and the second displays the formatted `cartTotal`.
+   - Display Shipping charges:
+     - Similar to the Subtotal, but the text reads "Shipping" and the value is the formatted `shipping`.
+   - Display Tax:
+     - Similar format, but the text reads "Tax" and the value is the formatted `tax`.
+   - Display Order Total:
+     - Use a `p` element with classes `mt-4`, `flex`, `justify-between`, and `text-sm  pb-2`.
+     - Use nested `span` elements with `font-bold` class. The first displays "Order Total", and the second displays the formatted `orderTotal`.
+
+5. **Export CartTotals Component**:
+
+   - Export the `CartTotals` component as the default export of the module.
+
+## Cart Totals
+
+```js
+import { useSelector } from "react-redux";
+import { formatPrice } from "../utils";
+const CartTotals = () => {
+  const { cartTotal, shipping, tax, orderTotal } = useSelector(
+    (state) => state.cartState
+  );
+
+  return (
+    <div className="card bg-base-200">
+      <div className="card-body">
+        {/* SUBTOTAL */}
+        <p className="flex justify-between text-xs border-b border-base-300 pb-2">
+          <span>Subtotal</span>
+          <span className="font-medium">{formatPrice(cartTotal)}</span>
+        </p>
+        {/* SHIPPING */}
+        <p className="flex justify-between text-xs border-b border-base-300 pb-2">
+          <span>Shipping</span>
+          <span className="font-medium">{formatPrice(shipping)}</span>
+        </p>
+        {/* Tax */}
+        <p className="flex justify-between text-xs border-b border-base-300 pb-2">
+          <span>Tax</span>
+          <span className="font-medium">{formatPrice(tax)}</span>
+        </p>
+        {/* Total */}
+        <p className="mt-4 flex justify-between text-sm  pb-2">
+          <span className="font-bold">Order Total</span>
+          <span className="font-bold">{formatPrice(orderTotal)}</span>
+        </p>
+      </div>
+    </div>
+  );
+};
+export default CartTotals;
+```
