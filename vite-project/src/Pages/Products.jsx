@@ -7,7 +7,7 @@ export const loader = async ({ request }) => {
   const url = new URL(request.url);
   // url.searchParams // object of type : URLSearchParams
   console.log(url, url.searchParams);
-  const params = Object.fromEntries([...url.searchParams.entries()]);
+  const params = Object.fromEntries([...url.searchParams.entries()]); // .entries() -> [[a:1],[b:2]]
   console.log(Object.entries(params));
   const response = await comfFetch.get("/products", { params });
 
