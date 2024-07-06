@@ -3,23 +3,40 @@ import { Link, useLoaderData } from "react-router-dom";
 import comfFetch from "../utils/customAxios";
 import { formatPrice } from "../utils/useFunctions";
 import { generateAmountOptions } from "../utils";
+import { addItem } from "../features/cart/cartSlice";
+import { useDispatch } from "react-redux";
 
 export const loader = async ({ params }) => {
   const { id } = params;
   const data = await comfFetch.get(`/products/${id}`);
   const product = data.data.data;
   console.log(product);
-  return { product: product.attributes };
+  return { product };
 };
 
 const SingleProduct = () => {
+  const dispatch = useDispatch();
   const { product } = useLoaderData();
-  const { image, title, price, description, colors, company } = product;
+  const { image, title, price, description, colors, company } =
+    product.attributes;
+
   console.log(colors, "aqui");
   const [someAtribs, setSomeAtribs] = useState({
     productColor: colors[0] || "",
-    amount: 0,
+    amount: 1,
   });
+
+  const cartProduct = {
+    cartID: product.id + someAtribs.productColor,
+    productID: product.id,
+    image,
+    title,
+    price,
+    amount: someAtribs.amount,
+    productColor: someAtribs.productColor,
+    company,
+  };
+
   const dollarsAmount = formatPrice(price);
   const optionsAmounts = generateAmountOptions(5);
 
@@ -98,7 +115,7 @@ const SingleProduct = () => {
           <div className="mt-10 ">
             <button
               className="btn btn-secondary btn-md"
-              onClick={() => console.log("add to bag")}
+              onClick={() => dispatch(addItem(cartProduct))}
             >
               Add to Cart
             </button>

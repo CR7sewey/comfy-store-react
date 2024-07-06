@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const initialState = {
   // just responsible for the cart
@@ -8,7 +9,7 @@ const initialState = {
   numItemsInCart: 0,
   cartTotal: 0,
   shipping: 500,
-  tax: 0,
+  tax: 0.1,
   ordercartTotal: 0,
 };
 
@@ -29,6 +30,15 @@ export const getCartItems = createAsyncThunk(
   }
 );*/
 
+const getCartTotal = (state) => {
+  let total = 0;
+  state.cartItems.forEach((items) => {
+    total += Number(items.amount) * Number(items.price);
+  });
+  let ordercartTotal = state.total + state.shipping + total * state.tax;
+  return { total, ordercartTotal };
+};
+
 const getInitialState = () => {
   return JSON.parse(localStorage.getItem("cartItems")) || initialState;
 };
@@ -37,6 +47,26 @@ const cartSlice = createSlice({
   name: "cart",
   initialState: getInitialState(),
   reducers: {
+    addItem: (state, action) => {
+      console.log(action);
+      const cartItem = state.cartItems.find(
+        (item) => item.cartID === action.payload.cartID
+      );
+      if (cartItem) {
+        cartItem.amount += action.payload.amount;
+        console.log(cartItem.amount);
+      } else {
+        state.cartItems.push(action.payload);
+      }
+
+      state.numItemsInCart += action.payload.amount;
+      const { total, ordercartTotal } = getCartTotal(state);
+      state.ordercartTotal = ordercartTotal;
+      state.cartTotal = total;
+
+      localStorage.setItem("cartItems", JSON.stringify(state));
+      toast.success(`Item ${action.payload.cartID} added to the cart!`);
+    },
     clearCart: (state) => {
       // semelhante ao dispatch do use reducer??
       state.cartItems = []; // dont have to return anything ao contrario do useReducer (bcs the Immer Library! check read me)
@@ -109,6 +139,7 @@ export const {
   decreaseItem,
   increaseItem,
   calculateTotals,
+  addItem,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

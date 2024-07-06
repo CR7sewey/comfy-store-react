@@ -2643,3 +2643,121 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   </Provider>
 );
 ```
+
+## 32 - Add Product (SingleProductPage)
+
+- import and dispatch addItem action
+- add item to cart in SingleProduct page
+
+## Add Product (SingleProductPage)
+
+SingleProduct.jsx
+
+```js
+import { useDispatch } from "react-redux";
+import { addItem } from "../features/cart/cartSlice";
+const SingleProduct = () => {
+  const dispatch = useDispatch();
+  const cartProduct = {
+    cartID: product.id + productColor,
+    productID: product.id,
+    image,
+    title,
+    price,
+    amount,
+    productColor,
+    company,
+  };
+
+  const addToCart = () => {
+    dispatch(addItem({ product: cartProduct }));
+  };
+  return (
+    <section>
+      ....
+      {/* CART BUTTON */}
+      <div className="mt-10 ">
+        <button className="btn btn-secondary btn-md" onClick={addToCart}>
+          Add to bag
+        </button>
+      </div>
+    </section>
+  );
+};
+```
+
+## 34 - AddItem Reducer
+
+- display cartItems in Navbar
+- setup addItem functionality
+
+## Building the `addItem` Reducer
+
+1. **Purpose**:
+
+- This reducer updates the cart state when a product is added.
+
+2. **Extract Product from Action**:
+
+- Extract the `product` object from `action.payload`.
+
+3. **Check for Existing Item**:
+
+- Search for the product in the `cartItems` array based on the `cartID`.
+- If the item already exists in the cart:
+  - Increment the `amount` of the item in the cart by the `amount` of the `product`.
+
+4. **Add New Item**:
+
+- If the product does not exist in the cart:
+  - Push the `product` directly into the `cartItems` array.
+
+5. **Update Cart Totals**:
+
+- Increase the `numItemsInCart` by the `amount` of the product.
+- Increase the `cartTotal` by the product's `price` multiplied by its `amount`.
+
+6. **Calculate Tax and Order Total**:
+
+- Set `tax` as 10% of the `cartTotal`.
+- Calculate the `orderTotal` as the sum of `cartTotal`, `shipping`, and `tax`.
+
+7. **Save to Local Storage**:
+
+- Convert the current state to a JSON string and store it in the browser's local storage under the key 'cart'.
+
+8. **Notify User**:
+
+- Use the `toast.success` method to display a success message: 'Item added to cart'.
+
+## AddItem Reducer
+
+Navbar.jsx
+
+```js
+import { useSelector } from "react-redux";
+const numItemsInCart = useSelector((state) => state.cartState.numItemsInCart);
+```
+
+cartSlice.js
+
+```js
+{
+    addItem: (state, action) => {
+      const { product } = action.payload;
+
+      const item = state.cartItems.find((i) => i.cartID === product.cartID);
+      if (item) {
+        item.amount += product.amount;
+      } else {
+        state.cartItems.push(product);
+      }
+      state.numItemsInCart += product.amount;
+      state.cartTotal += product.price * product.amount;
+      state.tax = 0.1 * state.cartTotal;
+      state.orderTotal = state.cartTotal + state.shipping + state.tax;
+      localStorage.setItem('cart', JSON.stringify(state));
+      toast.success('Item added to cart');
+    },
+}
+```
