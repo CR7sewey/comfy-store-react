@@ -62,25 +62,59 @@ const cartSlice = createSlice({
       }
 
       state.numItemsInCart += action.payload.amount;
-      const { total, ordercartTotal, tax } = getCartTotal(state);
+      /* const { total, ordercartTotal, tax } = getCartTotal(state);
       state.ordercartTotal = ordercartTotal;
       state.cartTotal = total;
-      state.tax = tax;
+      state.tax = tax;*/
+      cartSlice.caseReducers.calculatecartTotals(state);
 
       localStorage.setItem("cartItems", JSON.stringify(state));
       toast.success(`Item ${action.payload.cartID} added to the cart!`);
     },
+    removeItem: (state, action) => {
+      console.log(action);
+      state.cartItems = state.cartItems.filter(
+        (values) => values.cartID !== action.payload.cartID
+      );
+      state.numItemsInCart -= action.payload.amount;
+      /* const { total, ordercartTotal, tax } = getCartTotal(state);
+      state.ordercartTotal = ordercartTotal;
+      state.cartTotal = total;
+      state.tax = tax;*/
+      cartSlice.caseReducers.calculatecartTotals(state);
+      toast.error("Item removed from cart");
+    },
+    editItem: (state, action) => {
+      let previousAmount = 0;
+      state.cartItems = state.cartItems.map((values) => {
+        if (values.cartID === action.payload.cartID) {
+          previousAmount = values.amount;
+          values.amount = action.payload.amount;
+        }
+        return values;
+      });
+      state.numItemsInCart =
+        state.numItemsInCart + action.payload.amount - previousAmount;
+      /* const { total, ordercartTotal, tax } = getCartTotal(state);
+      state.ordercartTotal = ordercartTotal;
+      state.cartTotal = total;
+      state.tax = tax;*/
+      cartSlice.caseReducers.calculatecartTotals(state);
+      toast.error("Item removed from cart");
+    },
+
     clearCart: (state) => {
       // semelhante ao dispatch do use reducer??
       state.cartItems = []; // dont have to return anything ao contrario do useReducer (bcs the Immer Library! check read me)
+      /* const { total, ordercartTotal, tax } = getCartTotal(state);
+      state.ordercartTotal = ordercartTotal;
+      state.cartTotal = total;
+      state.tax = tax;*/
+      cartSlice.caseReducers.calculatecartTotals(state);
       localStorage.setItem("cartItems", JSON.stringify(state));
     },
-    clearItem: (state, action) => {
-      state.cartItems = state.cartItems.filter(
-        (values) => values.id !== action.payload
-      );
-    },
-    increaseItem: (state, action) => {
+
+    /*increaseItem: (state, action) => {
       const cartItem = state.cartItems.find(
         (item) => item.id === action.payload
       );
@@ -101,17 +135,19 @@ const cartSlice = createSlice({
           (values) => values.id !== action.payload
         );
       }
-    },
+    },*/
     calculatecartTotals: (state) => {
       let total = 0;
-      let numItemsInCart = 0;
-      state.cartItems.forEach((val) => {
-        total += Number(val.price) * val.numItemsInCart;
-        numItemsInCart += val.numItemsInCart;
+      state.cartItems.forEach((items) => {
+        total += Number(items.amount) * Number(items.price);
       });
-
-      state.numItemsInCart = numItemsInCart;
+      let tax = total * 0.1;
+      state.tax = tax;
       state.cartTotal = total;
+      state.ordercartTotal = state.cartTotal + state.shipping + state.tax;
+      //let ordercartTotal = total + state.shipping + tax;
+      //console.log(ordercartTotal, "oct");
+      //return { total, ordercartTotal, tax };
     },
   },
   /*
@@ -143,6 +179,8 @@ export const {
   increaseItem,
   calculateTotals,
   addItem,
+  removeItem,
+  editItem,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

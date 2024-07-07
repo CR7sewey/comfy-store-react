@@ -2926,3 +2926,350 @@ const CartTotals = () => {
 };
 export default CartTotals;
 ```
+
+## 37 - Cart Items List
+
+- iterate over cartItems and return CartItem
+- in CartItem display values and implement remove,edit functionality
+
+### CartItemsList.jsx
+
+1. **Initialize Necessary Imports**:
+
+   - Import `useSelector` from `react-redux` to retrieve state from the Redux store.
+   - Bring in `CartItem` component for item rendering.
+
+2. **Create CartItemsList Component**:
+
+   - Define a functional component named `CartItemsList`.
+
+3. **Retrieve State from Redux**:
+
+   - Use the `useSelector` hook to get `cartItems` from the Redux store's `cartState`.
+
+4. **Component Structure**:
+
+   - Create a wrapping `div`.
+   - Use the `map` method on `cartItems` to loop through each item.
+   - For each `item`, return a `CartItem` component:
+     - Pass `item.cartID` as the `key` prop for React's list rendering optimization.
+     - Pass the entire `item` object as the `cartItem` prop to the `CartItem` component.
+
+5. **Export CartItemsList Component**:
+
+   - Export the `CartItemsList` component as the default export of the module.
+
+### CartItem.js
+
+1. **Initialize Necessary Imports**:
+
+   - Import utility functions `formatPrice` and `generateAmountOptions` from the `../utils` directory.
+   - Import `removeItem` and `editItem` from the Redux slice named `cartSlice`.
+   - Bring in `useDispatch` from `react-redux` for dispatching actions to the Redux store.
+
+2. **Create CartItem Component**:
+
+   - Define a functional component named `CartItem` that accepts a `cartItem` prop.
+
+3. **Setup Redux Dispatch**:
+
+   - Use the `useDispatch` hook and store the result in the `dispatch` constant.
+
+4. **Functions for Event Handlers**:
+
+   - Define `removeItemFromTheCart` function:
+     - Dispatch the `removeItem` action, passing the `cartID` from the cart item.
+   - Define `handleAmount` function:
+     - Dispatch the `editItem` action, updating the `amount` for the cart item identified by `cartID`.
+
+5. **Destructure cartItem Prop**:
+
+   - Extract necessary fields from `cartItem` including `cartID`, `title`, `price`, `image`, `amount`, `company`, and `productColor`.
+
+6. **Component Structure**:
+
+   - Create an `article` element wrapping the entire cart item.
+     - Embed the product image using an `img` element.
+     - Display product information using a `div`:
+       - Show the product `title`, `company`, and `color` using corresponding elements.
+     - Render the product amount using a `div` containing a dropdown `select`.
+     - Provide a `button` to remove the item from the cart.
+     - Display the product price using a `p` element.
+
+7. **Export CartItem Component**:
+
+   - Export the `CartItem` component as the default export of the module.
+
+## Cart Items List
+
+CartItemsList.jsx
+
+```js
+import { useSelector } from "react-redux";
+import CartItem from "./CartItem";
+const CartItemsList = () => {
+  const cartItems = useSelector((state) => state.cartState.cartItems);
+
+  return (
+    <div>
+      {cartItems.map((item) => {
+        return <CartItem key={item.cartID} cartItem={item} />;
+      })}
+    </div>
+  );
+};
+export default CartItemsList;
+```
+
+CartItem.jsx
+
+```js
+import { formatPrice, generateAmountOptions } from "../utils";
+import { removeItem, editItem } from "../features/cart/cartSlice";
+import { useDispatch } from "react-redux";
+const CartItem = ({ cartItem }) => {
+  const dispatch = useDispatch();
+
+  const removeItemFromTheCart = () => {
+    dispatch(removeItem({ cartID }));
+  };
+  const handleAmount = (e) => {
+    dispatch(editItem({ cartID, amount: parseInt(e.target.value) }));
+  };
+
+  const { cartID, title, price, image, amount, company, productColor } =
+    cartItem;
+
+  return (
+    <article
+      key={cartID}
+      className="mb-12 flex flex-col gap-y-4 sm:flex-row flex-wrap border-b border-base-300 pb-6 last:border-b-0"
+    >
+      {/* IMAGE */}
+      <img
+        src={image}
+        alt={title}
+        className="h-24 w-24 rounded-lg sm:h-32 sm:w-32 object-cover"
+      />
+      {/* INFO */}
+      <div className="sm:ml-16 sm:w-48">
+        {/* TITLE */}
+        <h3 className="capitalize font-medium">{title}</h3>
+        {/* COMPANY */}
+        <h4 className="mt-2 capitalize text-sm text-neutral-content">
+          {company}
+        </h4>
+        {/* COLOR */}
+        <p className="mt-4 text-sm capitalize flex items-center gap-x-2">
+          color :
+          <span
+            className="badge badge-sm"
+            style={{ backgroundColor: productColor }}
+          ></span>
+        </p>
+      </div>
+      <div className="sm:ml-12">
+        {/* AMOUNT */}
+        <div className="form-control max-w-xs">
+          <label htmlFor="amount" className="label p-0">
+            <span className="label-text">Amount</span>
+          </label>
+          <select
+            name="amount"
+            id="amount"
+            className="mt-2 select select-base select-bordered select-xs"
+            value={amount}
+            onChange={handleAmount}
+          >
+            {generateAmountOptions(amount + 5)}
+          </select>
+        </div>
+        {/* REMOVE */}
+        <button
+          className="mt-2 link link-primary link-hover text-sm"
+          onClick={removeItemFromTheCart}
+        >
+          remove
+        </button>
+      </div>
+
+      {/* PRICE */}
+      <p className="font-medium sm:ml-auto">{formatPrice(price)}</p>
+    </article>
+  );
+};
+export default CartItem;
+```
+
+CartItem.jsx
+
+```js
+<div className="sm:ml-12">
+  {/* AMOUNT */}
+  {/* REMOVE */}
+</div>
+```
+
+## 38 - Clear Cart, Remove Item and Edit Item
+
+- try to setup reducers for clear cart, remove item and edit item
+
+## Building the Reducers
+
+### clearCart Reducer:
+
+1. **Purpose**:
+
+- Clears the current cart state and resets it to the default state.
+
+2. **Update Local Storage**:
+
+- Store the `defaultState` in the browser's local storage under the key 'cart'.
+
+3. **Return Default State**:
+
+- Reset the entire cart state by returning `defaultState`.
+
+### removeItem Reducer:
+
+1. **Purpose**:
+
+- Removes a specific item from the cart.
+
+2. **Extract cartID from Action**:
+
+- Extract the `cartID` from `action.payload`.
+
+3. **Find Product**:
+
+- Find the product in the `cartItems` array based on the `cartID`.
+
+4. **Update Cart Items**:
+
+- Filter out the product from `cartItems` array based on the `cartID`.
+
+5. **Update Cart Totals**:
+
+- Decrease the `numItemsInCart` by the `amount` of the product.
+- Decrease the `cartTotal` by the product's `price` multiplied by its `amount`.
+- Call the `calculateTotals` reducer to re-evaluate tax and order total.
+
+6. **Notify User**:
+
+- Use the `toast.error` method to display a message: 'Item removed from cart'.
+
+### editItem Reducer:
+
+1. **Purpose**:
+
+- Modifies the amount of a specific item in the cart.
+
+2. **Extract Data from Action**:
+
+- Extract `cartID` and `amount` from `action.payload`.
+
+3. **Find Item**:
+
+- Find the item in the `cartItems` array based on the `cartID`.
+
+4. **Update Cart Totals**:
+
+- Adjust the `numItemsInCart` by the difference between the new amount and the item's previous amount.
+- Update the `cartTotal` based on the item's `price` and the amount difference.
+- Update the item's `amount` to the new amount.
+- Call the `calculateTotals` reducer to re-evaluate tax and order total.
+
+5. **Notify User**:
+
+- Use the `toast.success` method to display a message: 'Cart updated'.
+
+## Clear Cart, Remove Item and Edit Item
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
+
+const defaultState = {
+  cartItems: [],
+  numItemsInCart: 0,
+  cartTotal: 0,
+  shipping: 500,
+  tax: 0,
+  orderTotal: 0,
+};
+
+const getCartFromLocalStorage = () => {
+  return JSON.parse(localStorage.getItem("cart")) || defaultState;
+};
+
+const cartSlice = createSlice({
+  name: "cart",
+  initialState: getCartFromLocalStorage(),
+  reducers: {
+    addItem: (state, action) => {
+      const { product } = action.payload;
+
+      const item = state.cartItems.find((i) => i.cartID === product.cartID);
+      if (item) {
+        item.amount += product.amount;
+      } else {
+        state.cartItems.push(product);
+      }
+      state.numItemsInCart += product.amount;
+      state.cartTotal += product.price * product.amount;
+      cartSlice.caseReducers.calculateTotals(state);
+      toast.success("item added to cart");
+    },
+    clearCart: (state) => {
+      localStorage.setItem("cart", JSON.stringify(defaultState));
+      return defaultState;
+    },
+
+    removeItem: (state, action) => {
+      const { cartID } = action.payload;
+      const product = state.cartItems.find((i) => i.cartID === cartID);
+      state.cartItems = state.cartItems.filter((i) => i.cartID !== cartID);
+
+      state.numItemsInCart -= product.amount;
+      state.cartTotal -= product.price * product.amount;
+      cartSlice.caseReducers.calculateTotals(state);
+      toast.error("Item removed from cart");
+    },
+    editItem: (state, action) => {
+      const { cartID, amount } = action.payload;
+      const item = state.cartItems.find((i) => i.cartID === cartID);
+      state.numItemsInCart += amount - item.amount;
+      state.cartTotal += item.price * (amount - item.amount);
+      item.amount = amount;
+      cartSlice.caseReducers.calculateTotals(state);
+      toast.success("Cart updated");
+    },
+
+    calculateTotals: (state) => {
+      state.tax = 0.1 * state.cartTotal;
+      state.orderTotal = state.cartTotal + state.shipping + state.tax;
+      localStorage.setItem("cart", JSON.stringify(state));
+    },
+  },
+});
+
+export const { addItem, removeItem, editItem, clearCart } = cartSlice.actions;
+
+export default cartSlice.reducer;
+```
+
+```js
+state.numItemsInCart += amount - item.amount;
+```
+
+The logic here is to update the total number of items in the cart (state.numItemsInCart) by adjusting it based on the difference between the provided amount and the existing quantity of that item (item.amount). If amount is greater than item.amount, it means that items are being added to the cart. If amount is less than item.amount, it means that items are being removed from the cart. If they are equal, it implies no change to the quantity of that item in the cart.
+
+The result of the subtraction (amount - item.amount) is then added to the current state.numItemsInCart to reflect the new total number of items in the cart.
+
+```js
+state.cartTotal += item.price * (amount - item.amount);
+```
+
+In this line, the logic is calculating the change in the total cost of the cart (state.cartTotal) based on the price of the item (item.price) and the change in the quantity of that item (amount - item.amount). This calculation is then added to the current state.cartTotal.
+
+If amount is greater than item.amount, it means more items are being added, so the cost of those additional items (difference between amount and item.amount) is calculated by multiplying it with the price of the item. If amount is less than item.amount, it means items are being removed, so the cost of those removed items is subtracted from the state.cartTotal. If they are equal, there is no change in the cost related to that item.

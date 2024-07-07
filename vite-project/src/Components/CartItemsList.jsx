@@ -1,10 +1,12 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { generateAmountOptions } from "../utils";
 import { formatPrice } from "../utils/useFunctions";
+import { editItem, removeItem } from "../features/cart/cartSlice";
 
 const CartItemsList = () => {
   const { cartItems } = useSelector((state) => state.cartState);
+  const dispatch = useDispatch();
   return (
     <div>
       {cartItems.map((items) => {
@@ -47,7 +49,11 @@ const CartItemsList = () => {
                   id="amount"
                   className="mt-2 select select-base select-bordered select-xs"
                   value={amount}
-                  onChange={() => console.log("action")}
+                  onChange={(e) =>
+                    dispatch(
+                      editItem({ cartID, amount: parseInt(e.target.value) })
+                    )
+                  }
                 >
                   {generateAmountOptions(amount + 5)}
                 </select>
@@ -55,7 +61,7 @@ const CartItemsList = () => {
               {/* REMOVE */}
               <button
                 className="mt-2 link link-primary link-hover text-sm"
-                onClick={() => console.log("action")}
+                onClick={() => dispatch(removeItem({ cartID, amount }))}
               >
                 remove
               </button>
