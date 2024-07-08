@@ -2,9 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const getThemeFromLocalStorage = () => {
+  const theme = localStorage.getItem("theme") || "winter";
+  document.documentElement.setAttribute("data-theme", theme);
+  return theme;
+};
 const initialState = {
   user: { username: "comfy store user" },
-  theme: "dracula",
+  theme: getThemeFromLocalStorage(),
 };
 
 const userSlice = createSlice({
@@ -17,8 +22,11 @@ const userSlice = createSlice({
     logoutUser: (state) => {
       console.log("aqui zezocas 2");
     },
-    toggleTheme: (state, action) => {
-      console.log("aqui zezocas 3");
+    toggleTheme: (state) => {
+      console.log("theme");
+      state.theme = "dracula" === state.theme ? "winter" : "dracula";
+      document.documentElement.setAttribute("data-theme", state.theme);
+      localStorage.setItem("theme", state.theme);
     },
   },
   /*
@@ -43,6 +51,6 @@ const userSlice = createSlice({
 console.log(userSlice);
 console.log(userSlice.actions);
 
-export const { loginUser } = userSlice.actions;
+export const { loginUser, logoutUser, toggleTheme } = userSlice.actions;
 
 export default userSlice.reducer;

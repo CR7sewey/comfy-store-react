@@ -3,30 +3,35 @@ import { NavLink } from "react-router-dom";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
 import Navlinks from "./Navlinks";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../features/user/userSlice";
 
 const themes = ["winter", "dracula"];
-
+/*
 const getThemeFromLocalStorage = () => {
   return localStorage.getItem("theme") || "winter";
-};
+};*/
 
 const Navbar = () => {
-  const [theme, handleTheme] = useState(getThemeFromLocalStorage());
+  //const [theme, handleTheme] = useState(getThemeFromLocalStorage());
   const { numItemsInCart } = useSelector((state) => state.cartState);
+  const { theme } = useSelector((state) => state.userState);
+  const dispatch = useDispatch();
 
-  const toggleTheme = () => {
-    const new_theme = theme === "winter" ? "dracula" : "winter";
-    handleTheme(new_theme);
+  const toggle_Theme = () => {
+    //const new_theme = theme === "winter" ? "dracula" : "winter";
+    //handleTheme(new_theme);
+    dispatch(toggleTheme());
     //changeTheme(theme);
     //localStorage.setItem("theme", new_theme);
   };
 
+  /*
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     console.log(document.documentElement);
     localStorage.setItem("theme", theme);
-  }, [theme]);
+  }, [theme]);*/
 
   return (
     <nav className="bg-base-200">
@@ -57,7 +62,11 @@ const Navbar = () => {
           <div className="navbar-end">
             <label className="swap swap-rotate ">
               {/* this hidden checkbox controls the state */}
-              <input type="checkbox" onChange={toggleTheme} />
+              <input
+                type="checkbox"
+                onChange={toggle_Theme}
+                defaultChecked={theme === "dracula"}
+              />
 
               {/* sun icon */}
               <BsSunFill className="swap-on h-4 w-4" />

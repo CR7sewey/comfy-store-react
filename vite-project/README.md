@@ -3273,3 +3273,252 @@ state.cartTotal += item.price * (amount - item.amount);
 In this line, the logic is calculating the change in the total cost of the cart (state.cartTotal) based on the price of the item (item.price) and the change in the quantity of that item (amount - item.amount). This calculation is then added to the current state.cartTotal.
 
 If amount is greater than item.amount, it means more items are being added, so the cost of those additional items (difference between amount and item.amount) is calculated by multiplying it with the price of the item. If amount is less than item.amount, it means items are being removed, so the cost of those removed items is subtracted from the state.cartTotal. If they are equal, there is no change in the cost related to that item.
+
+## 39 - Setup User Slice
+
+- setup user slice
+- add to store
+
+### userSlice.js
+
+- create features/user/userSlice.js
+- Import Dependencies:
+
+  - Import `createSlice` from `'@reduxjs/toolkit'`.
+  - Import `toast` from `'react-toastify'`.
+
+- Define Initial State:
+
+  - Create an `initialState` object with default values for `user` and `theme`.
+
+- Create Redux Slice:
+
+  - Use `createSlice` to define a Redux slice named `'user'`.
+  - Set the slice name to `'user'`.
+  - Use the `initialState` object as the initial state.
+
+- Define Reducer Functions:
+
+  - Create the `loginUser` reducer function with the signature `(state, action) => {}`.
+
+    - Inside the function, log a message like `'login'`.
+
+  - Create the `logoutUser` reducer function with the signature `(state) => {}`.
+
+    - Inside the function, log a message like `'logout'`.
+
+  - Create the `toggleTheme` reducer function with the signature `(state) => {}`.
+    - Inside the function, log a message like `'toggle theme'`.
+
+- Export Actions:
+  - Export the action creators:
+    - `loginUser`
+    - `logoutUser`
+    - `toggleTheme`
+
+## Setup User Slice
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
+
+const initialState = {
+  user: { username: "coding addict" },
+  theme: "dracula",
+};
+
+const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    loginUser: (state, action) => {
+      console.log("login");
+    },
+    logoutUser: (state) => {
+      console.log("logout");
+    },
+    toggleTheme: (state) => {
+      console.log("toggle theme");
+    },
+  },
+});
+
+export const { loginUser, logoutUser, toggleTheme } = userSlice.actions;
+
+export default userSlice.reducer;
+```
+
+store.js
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+
+import cartReducer from "./features/cart/cartSlice";
+import userReducer from "./features/user/userSlice";
+
+export const store = configureStore({
+  reducer: {
+    cartState: cartReducer,
+    userState: userReducer,
+  },
+});
+```
+
+## 40 - Move Theme Logic
+
+- move theme logic from Navbar to userSlice
+
+## Move Theme Logic
+
+userSlice.js
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
+
+const themes = {
+  winter: "winter",
+  dracula: "dracula",
+};
+
+const getThemeFromLocalStorage = () => {
+  const theme = localStorage.getItem("theme") || themes.winter;
+  document.documentElement.setAttribute("data-theme", theme);
+  return theme;
+};
+
+const initialState = {
+  user: { username: "coding addict" },
+  theme: getThemeFromLocalStorage(),
+};
+
+const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    loginUser: (state, action) => {
+      console.log("login");
+    },
+    logoutUser: (state) => {
+      console.log("logout");
+    },
+    toggleTheme: (state) => {
+      const { dracula, winter } = themes;
+      state.theme = state.theme === dracula ? winter : dracula;
+      document.documentElement.setAttribute("data-theme", state.theme);
+      localStorage.setItem("theme", state.theme);
+    },
+  },
+});
+
+export const { loginUser, logoutUser, toggleTheme } = userSlice.actions;
+
+export default userSlice.reducer;
+```
+
+Navbar.js
+
+```js
+import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
+import { FaBarsStaggered } from "react-icons/fa6";
+import { NavLink } from "react-router-dom";
+import NavLinks from "./NavLinks";
+
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../features/user/userSlice";
+
+const Navbar = () => {
+  const numItemsInCart = useSelector((state) => state.cartState.numItemsInCart);
+
+  const dispatch = useDispatch();
+  const handleTheme = () => {
+    dispatch(toggleTheme());
+  };
+  return (
+    <nav className="bg-base-200">
+      <div className="navbar align-element ">
+        <div className="navbar-start">
+          {/* Title */}
+          <NavLink
+            to="/"
+            className="hidden lg:flex btn btn-primary text-3xl items-center "
+          >
+            C
+          </NavLink>
+          {/* DROPDOWN */}
+          <div className="dropdown">
+            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+              <FaBarsStaggered className="h-6 w-6" />
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52"
+            >
+              <NavLinks />
+            </ul>
+          </div>
+        </div>
+        <div className="navbar-center hidden lg:flex">
+          <ul className="menu menu-horizontal ">
+            <NavLinks />
+          </ul>
+        </div>
+        <div className="navbar-end">
+          {/* THEME ICONS */}
+          <label className="swap swap-rotate ">
+            {/* this hidden checkbox controls the state */}
+            <input type="checkbox" onChange={handleTheme} />
+
+            {/* sun icon */}
+            <BsSunFill className="swap-on h-4 w-4" />
+
+            {/* moon icon */}
+            <BsMoonFill className="swap-off h-4 w-4" />
+          </label>
+          {/* CART LINK*/}
+          <NavLink to="cart" className="btn btn-ghost btn-circle btn-md ml-4">
+            <div className="indicator">
+              <BsCart3 className="h-6 w-6" />
+              <span className="badge badge-sm badge-primary indicator-item">
+                {numItemsInCart}
+              </span>
+            </div>
+          </NavLink>
+        </div>
+      </div>
+    </nav>
+  );
+};
+export default Navbar;
+```
+
+## Additional Logic
+
+Navbar.jsx
+
+```js
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '../features/user/userSlice';
+
+const Navbar = () => {
+  const theme = useSelector((state) => state.userState.theme);
+  const isDarkTheme = theme === 'dracula';
+
+  return (...
+          {/* THEME SETUP */}
+          <label className='swap swap-rotate'>
+            <input
+              type='checkbox'
+              onChange={handleTheme}
+              defaultChecked={isDarkTheme}
+            />
+            {/* sun icon*/}
+            <BsSunFill className='swap-on h-4 w-4' />
+            {/* moon icon*/}
+            <BsMoonFill className='swap-off h-4 w-4' />
+          </label>
+          );
+          ...
+};
+export default Navbar;
+```

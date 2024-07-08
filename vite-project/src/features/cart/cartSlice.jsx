@@ -82,6 +82,7 @@ const cartSlice = createSlice({
       state.cartTotal = total;
       state.tax = tax;*/
       cartSlice.caseReducers.calculatecartTotals(state);
+      localStorage.setItem("cartItems", JSON.stringify(state));
       toast.error("Item removed from cart");
     },
     editItem: (state, action) => {
@@ -100,6 +101,7 @@ const cartSlice = createSlice({
       state.cartTotal = total;
       state.tax = tax;*/
       cartSlice.caseReducers.calculatecartTotals(state);
+      localStorage.setItem("cartItems", JSON.stringify(state));
       toast.error("Item removed from cart");
     },
 
