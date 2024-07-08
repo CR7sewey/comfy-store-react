@@ -20,7 +20,10 @@ const userSlice = createSlice({
       console.log("aqui zezocas 1");
     },
     logoutUser: (state) => {
-      console.log("aqui zezocas 2");
+      state.user = null;
+      // localStorage.clear()
+      localStorage.removeItem("user");
+      toast.success("Logged out successfully");
     },
     toggleTheme: (state) => {
       console.log("theme");
