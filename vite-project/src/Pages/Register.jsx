@@ -1,6 +1,10 @@
 import React from "react";
 import { Form, Link } from "react-router-dom";
 import { FormInput, SubmitBtn } from "../Components";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { redirect } from "react-router-dom";
+import comfFetch from "../utils/customAxios";
 
 const registerFields = [
   {
@@ -25,6 +29,26 @@ const registerFields = [
     id: 3,
   },
 ];
+
+export const action = async ({ request }) => {
+  const dataForm = await request.formData(); // FormData Object
+  const entries = [...dataForm.values()]; //.entries
+  if (entries.includes("")) {
+    return toast.error("You need to provide all the info");
+  }
+  const data = Object.fromEntries(dataForm);
+  try {
+    const response = await comfFetch.post("/auth/local/register", data);
+    toast.success(`You are registered, ${data.username}`);
+    return redirect("/");
+  } catch (e) {
+    toast.error(
+      e?.response?.data?.error?.message ||
+        "please double check your credentials"
+    );
+    return e;
+  }
+};
 
 const Register = () => {
   return (

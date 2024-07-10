@@ -8,7 +8,7 @@ const getThemeFromLocalStorage = () => {
   return theme;
 };
 const initialState = {
-  user: { username: "comfy store user" },
+  user: { username: localStorage.getItem("user") },
   theme: getThemeFromLocalStorage(),
 };
 

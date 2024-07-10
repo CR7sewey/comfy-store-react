@@ -3622,3 +3622,96 @@ const Cart = () => {
   const { user } = useSelector((state) => state.userState);
 };
 ```
+
+## 42 - Register User
+
+- [API DOCS](https://documenter.getpostman.com/view/18152321/2s9Xy5KpTi)
+- docs - register request
+- test in Thunder Client
+- setup action in Register
+- add action to Register route in App.jsx
+
+### Register.js
+
+- Import Dependencies:
+
+  - Import `redirect` from `'react-router-dom'`.
+  - Import `customFetch` from `'../utils'`.
+  - Import `toast` from `'react-toastify'`.
+
+- Define an asynchronous function named `action` that takes an object with a property named `request` as its parameter.
+
+- Inside the `action` function:
+
+  - Use the `request` object to get form data using the `formData` method.
+  - Convert the form data to an object using `Object.fromEntries(formData)` and store it in the `data` variable.
+
+- Use a `try` block to handle the registration process:
+
+  - Send a POST request using `customFetch.post` to the `/auth/local/register` endpoint with the `data`.
+  - If the request is successful:
+    - Display a success toast message using `toast.success`.
+    - Redirect the user to the `/login` page using `redirect('/login')`.
+
+- Use a `catch` block to handle errors:
+  - If an error occurs, extract the error message from the response data, if available, or provide a default error message.
+  - Display the error message using `toast.error`.
+  - Return `null` to indicate that an error occurred.
+
+## Register User
+
+Register.jsx
+
+```js
+import { FormInput, SubmitBtn } from "../components";
+import { Form, redirect, Link } from "react-router-dom";
+
+import { customFetch } from "../utils";
+import { toast } from "react-toastify";
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    const response = await customFetch.post("/auth/local/register", data);
+    toast.success("account created successfully");
+    return redirect("/login");
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.error?.message ||
+      "please double check your credentials";
+
+    toast.error(errorMessage);
+    return null;
+  }
+};
+
+const Register = () => {
+  return (
+    <section className="h-screen grid place-items-center">
+      <Form
+        method="POST"
+        className="card w-96 py-8 px-8 bg-base-100 shadow-lg flex flex-col gap-y-4"
+      >
+        <h4 className="text-center text-3xl font-bold">Register</h4>
+        <FormInput type="text" label="username" name="username" />
+        <FormInput type="email" label="email" name="email" />
+        <FormInput type="password" label="password" name="password" />
+        <div className="mt-4">
+          <SubmitBtn text="register" />
+        </div>
+
+        <p className="text-center">
+          Already a member?
+          <Link
+            to="/login"
+            className="ml-2 link link-hover link-primary capitalize"
+          >
+            login
+          </Link>
+        </p>
+      </Form>
+    </section>
+  );
+};
+export default Register;
+```
