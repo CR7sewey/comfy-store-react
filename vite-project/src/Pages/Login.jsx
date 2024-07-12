@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormInput, SubmitBtn } from "../Components";
 import { Form, Link } from "react-router-dom";
+import comfFetch from "../utils/customAxios";
+import { toast } from "react-toastify";
+import { redirect } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../features/user/userSlice";
 
 const loginFields = [
   {
@@ -18,6 +23,33 @@ const loginFields = [
     id: 2,
   },
 ];
+
+export const action =
+  (store) =>
+  async ({ request }) => {
+    const dataForm = await request.formData(); // FormData Object
+    const entries = [...dataForm.values()]; //.entries
+    if (entries.includes("")) {
+      return toast.error("You need to provide all the info");
+    }
+    const data = Object.fromEntries(dataForm);
+    console.log(data);
+    const datalogin = { identifier: data.email, password: data.password };
+
+    try {
+      const response = await comfFetch.post("/auth/local", datalogin);
+      store.dispatch(loginUser(response.data));
+      console.log(response);
+      //toast.success(`welcome, ${response.username}`);
+      return redirect("/");
+    } catch (e) {
+      toast.error(
+        e?.response?.data?.error?.message ||
+          "please double check your credentials"
+      );
+      return e;
+    }
+  };
 
 const Login = () => {
   return (

@@ -3715,3 +3715,128 @@ const Register = () => {
 };
 export default Register;
 ```
+
+## 43 Login Setup
+
+- [API DOCS](https://documenter.getpostman.com/view/18152321/2s9Xy5KpTi)
+- docs - login request
+- test in Thunder Client
+- setup action in login and access store
+
+## Solution (44) - Login Setup
+
+App.jsx
+
+```js
+import { action as loginAction } from './pages/Login';
+
+import { store } from './store';
+{
+    path: '/login',
+    element: <Login />,
+    errorElement: <Error />,
+    action: loginAction(store),
+  },
+```
+
+Login.jsx
+
+```js
+export const action =
+  (store) =>
+  async ({ request }) => {
+    console.log(store);
+    return store;
+  };
+```
+
+### Login.jsx
+
+- Import Dependencies:
+
+  - Import `redirect` from `'react-router-dom'`.
+  - Import `customFetch` from `'../utils'`.
+  - Import `toast` from `'react-toastify'`.
+  - Import `loginUser` from `'../features/user/userSlice'`.
+  - Import `useDispatch` from `'react-redux'`.
+
+- Define a function named `action` that takes a parameter `store` and returns an asynchronous function that takes an object with a property named `request`.
+
+- Inside the inner asynchronous function:
+
+  - Use the `request` object to get form data using the `formData` method.
+  - Convert the form data to an object using `Object.fromEntries(formData)` and store it in the `data` variable.
+
+- Use a `try` block to handle the login process:
+
+  - Send a POST request using `customFetch.post` to the `/auth/local` endpoint with the `data`.
+  - If the request is successful:
+    - Dispatch the `loginUser` action with the response data using `store.dispatch`.
+    - Display a success toast message using `toast.success`.
+    - Redirect the user to the home page using `redirect('/')`.
+
+- Use a `catch` block to handle errors:
+  - If an error occurs, log the error to the console.
+  - Extract the error message from the response data, if available, or provide a default error message.
+  - Display the error message using `toast.error`.
+  - Return `null` to indicate that an error occurred.
+
+userSlice.js
+
+```js
+loginUser: (state, action) => {
+      console.log(action.payload);
+    },
+```
+
+Login.jsx
+
+```js
+import { FormInput, SubmitBtn } from "../components";
+import { Form, Link, redirect, useNavigate } from "react-router-dom";
+import { customFetch } from "../utils";
+import { toast } from "react-toastify";
+import { loginUser } from "../features/user/userSlice";
+import { useDispatch } from "react-redux";
+
+export const action =
+  (store) =>
+  async ({ request }) => {
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
+    try {
+      const response = await customFetch.post("/auth/local", data);
+
+      store.dispatch(loginUser(response.data));
+      toast.success("logged in successfully");
+      return redirect("/");
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        "please double check your credentials";
+
+      toast.error(errorMessage);
+      return null;
+    }
+  };
+```
+
+userSlice.js
+
+```js
+const getUserFromLocalStorage = () => {
+  return JSON.parse(localStorage.getItem('user')) || null;
+};
+
+const initialState = {
+  user: getUserFromLocalStorage(),
+  theme: getThemeFromLocalStorage(),
+};
+
+loginUser: (state, action) => {
+      const user = { ...action.payload.user, token: action.payload.jwt };
+      state.user = user;
+      localStorage.setItem('user', JSON.stringify(user));
+    },
+```

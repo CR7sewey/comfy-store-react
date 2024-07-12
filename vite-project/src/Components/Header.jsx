@@ -5,6 +5,7 @@ import { logoutUser } from "../features/user/userSlice";
 
 const Header = () => {
   const { user } = useSelector((state) => state.userState);
+  console.log(user, "aa");
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -14,7 +15,7 @@ const Header = () => {
   return (
     <header className="bg-neutral py-2 text-neutral-content">
       <div className="align-element flex justify-center sm:justify-end">
-        {user.username ? (
+        {user ? (
           <div className="flex gap-x-2 sm:gap-x-8 items-center">
             <p className="text-xs sm:text-sm">Hello, {user.username}</p>
             <button
