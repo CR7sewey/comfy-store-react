@@ -3723,7 +3723,7 @@ export default Register;
 - test in Thunder Client
 - setup action in login and access store
 
-## Solution (44) - Login Setup
+## Login Setup
 
 App.jsx
 
@@ -3839,4 +3839,56 @@ loginUser: (state, action) => {
       state.user = user;
       localStorage.setItem('user', JSON.stringify(user));
     },
+```
+
+## 44 - Demo User
+
+- remove defaultValue from inputs
+
+### loginAsGuestUser
+
+- Create a function named `loginAsGuestUser`.
+- Mark the function as `async` to indicate that it contains asynchronous operations.
+- Wrap the entire function body in a `try` block to handle potential errors.
+- Inside the `try` block, use the `customFetch.post` method to send a POST request.
+- Provide the endpoint URL `/auth/local`.
+- Pass an object with `identifier` and `password` properties as the request body.
+- Assign the response from the `customFetch.post` call to the `response` variable.- If the request is successful, dispatch an action (e.g., `loginUser`) with the `response.data`.
+- Use the `toast.success` method to display a success message (e.g., 'welcome guest user').
+- If the action dispatch and toast success are successful, use the `navigate` function to navigate to a specific route (e.g., `'/'`).
+- If any error occurs within the `try` block, it will be caught by the `catch` block.
+- Inside the `catch` block, use `console.log` to log the error for debugging purposes.
+- Display an error message using the `toast.error` method to notify the user about the login error.
+
+## Demo User
+
+Login.jsx
+
+```js
+const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const loginAsGuestUser = async () => {
+    try {
+      const response = await customFetch.post("/auth/local", {
+        identifier: "test@test.com",
+        password: "secret",
+      });
+      dispatch(loginUser(response.data));
+      toast.success("welcome guest user");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("guest user login error.please try later.");
+    }
+  };
+};
+
+<button
+  type="button"
+  className="btn btn-secondary btn-block"
+  onClick={loginAsGuestUser}
+>
+  guest user
+</button>;
 ```

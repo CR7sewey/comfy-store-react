@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FormInput, SubmitBtn } from "../Components";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, useNavigate } from "react-router-dom";
 import comfFetch from "../utils/customAxios";
 import { toast } from "react-toastify";
 import { redirect } from "react-router-dom";
@@ -12,14 +12,14 @@ const loginFields = [
     type: "email",
     label: "Email",
     name: "email",
-    defaultValue: "test@test.com",
+    //defaultValue: "test@test.com",
     id: 1,
   },
   {
     type: "password",
     label: "Password",
     name: "password",
-    defaultValue: "secret",
+    //defaultValue: "secret",
     id: 2,
   },
 ];
@@ -52,6 +52,28 @@ export const action =
   };
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const loginWithDemo = async () => {
+    try {
+      const response = await comfFetch.post("/auth/local", {
+        identifier: "test@test.com",
+        password: "secret",
+      });
+      dispatch(loginUser(response.data));
+      console.log(response);
+      //toast.success(`welcome, ${response.username}`);
+      navigate("/"); // with redirect here it's not possible bcs the action overrides this redirect
+    } catch (e) {
+      toast.error(
+        e?.response?.data?.error?.message ||
+          "please double check your credentials"
+      );
+      return e;
+    }
+  };
+
   return (
     <section className="h-screen grid place-items-center">
       <Form
@@ -65,7 +87,9 @@ const Login = () => {
         <div className="mt-4">
           <SubmitBtn text="login" />
         </div>
-        <button className="btn btn-secondary btn-block">guest user</button>
+        <button className="btn btn-secondary btn-block" onClick={loginWithDemo}>
+          guest user
+        </button>
         <p className="text-center">
           Not a member yet?
           <Link
