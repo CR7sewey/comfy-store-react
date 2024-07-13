@@ -24,6 +24,7 @@ import { loader as singleProduct } from "./Pages/SingleProduct";
 import { loader as allProducts } from "./Pages/Products";
 import { action as registerUser } from "./Pages/Register";
 import { action as loginUser } from "./Pages/Login";
+import { loader as checkoutUser } from "./Pages/Checkout";
 import { store } from "./Store";
 
 const router = createBrowserRouter([
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
       {
         path: "checkout",
         element: <Checkout />,
+        loader: checkoutUser(store),
       },
       {
         path: "orders",

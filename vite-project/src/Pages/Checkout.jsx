@@ -5,14 +5,26 @@ import { Link } from "react-router-dom";
 import CartTotals from "../Components/CartTotals";
 import { redirect } from "react-router-dom";
 import CheckoutForm from "../Components/CheckoutForm";
+import { toast } from "react-toastify";
+
+export const loader = (store) => {
+  return async () => {
+    const user = store.getState().userState.user;
+    if (!user) {
+      toast.error("Please login to access the checkout page.");
+      return redirect("/login");
+    }
+    return null;
+  };
+};
 
 const Checkout = () => {
-  const user = useSelector((state) => state.userState.user);
+  //const user = useSelector((state) => state.userState.user);
   const numItemsInCart = useSelector((state) => state.cartState.numItemsInCart);
 
-  if (!user) {
+  /*if (!user) {
     redirect("/login");
-  }
+  }*/
 
   if (numItemsInCart === 0) {
     return <SectionTitle text="Your cart is empty" />;

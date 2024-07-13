@@ -3941,3 +3941,74 @@ const Checkout = () => {
 };
 export default Checkout;
 ```
+
+## 46 - Restrict Access
+
+App.jsx
+
+- in App.jsx import loader from Checkout page
+- pass store into the checkoutLoader
+- if no user redirect to login
+
+### Checkout.jsx
+
+- Import Dependencies:
+
+  - Import `redirect` from `'react-router-dom'`.
+  - Import `toast` from `'react-toastify'`.
+
+- Create a `loader` function:
+
+  - The `loader` function takes a `store` as a parameter.
+  - Inside the `loader` function:
+    - Get the `user` from the Redux store using `store.getState().userState.user`.
+    - Check if the `user` is falsy (not logged in).
+    - If the `user` is falsy:
+      - Display a toast warning message using `toast.warn()` with the text 'You must be logged in to checkout'.
+      - Return `redirect('/login')` to redirect the user to the login page.
+    - If the `user` is truthy (logged in):
+      - Return `null`.
+
+- Export the `loader` function.
+
+## Restrict Access
+
+App.jsx
+
+```js
+import { loader as checkoutLoader } from './pages/Checkout';
+
+import { store } from './store';
+
+const router = createBrowserRouter([
+  {
+   ....
+      {
+        path: 'checkout',
+        element: <Checkout />,
+        loader: checkoutLoader(store),
+
+      },
+
+  },
+
+]);
+
+```
+
+Checkout.jsx
+
+```js
+import { redirect } from "react-router-dom";
+import { toast } from "react-toastify";
+
+export const loader = (store) => async () => {
+  const user = store.getState().userState.user;
+
+  if (!user) {
+    toast.warn("You must be logged in to checkout");
+    return redirect("/login");
+  }
+  return null;
+};
+```
