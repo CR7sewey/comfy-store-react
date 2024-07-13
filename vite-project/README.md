@@ -3892,3 +3892,52 @@ const Login = () => {
   guest user
 </button>;
 ```
+
+## 45 - Checkout Page Setup
+
+- create CheckoutForm component
+
+### Checkout.jsx
+
+- Import Dependencies:
+
+  - Import `useSelector` from `'react-redux'`.
+  - Import `CheckoutForm`, `SectionTitle`, and `CartTotals` from `'../components'`.
+
+- Create the `Checkout` component:
+
+  - Inside the component, use `useSelector` to access the `cartTotal` from the Redux store.
+  - Check if the `cartTotal` is empty.
+  - If the `cartTotal` is empty, return a `SectionTitle` component with the text 'Your cart is empty'.
+  - If the `cartTotal` is not empty:
+    - Return a `SectionTitle` component with the text 'Place your order'.
+    - Render a `<div>` element with the class name 'mt-8 grid gap-8 md:grid-cols-2 items-start'.
+    - Inside the `<div>`, render the `CheckoutForm` component and the `CartTotals` component.
+
+- Export the `Checkout` component as the default export.
+
+## Checkout Page Setup
+
+Checkout.jsx
+
+```js
+import { useSelector } from "react-redux";
+import { CheckoutForm, SectionTitle, CartTotals } from "../components";
+
+const Checkout = () => {
+  const cartItems = useSelector((state) => state.cartState.cartTotal);
+  if (cartTotal.length === 0) {
+    return <SectionTitle text="Your cart is empty" />;
+  }
+  return (
+    <>
+      <SectionTitle text="Place your order" />
+      <div className="mt-8 grid gap-8  md:grid-cols-2 items-start">
+        <CheckoutForm />
+        <CartTotals />
+      </div>
+    </>
+  );
+};
+export default Checkout;
+```
