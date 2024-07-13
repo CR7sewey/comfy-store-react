@@ -4012,3 +4012,142 @@ export const loader = (store) => async () => {
   return null;
 };
 ```
+
+## 47 - CheckoutForm
+
+- [API DOCS](https://documenter.getpostman.com/view/18152321/2s9Xy5KpTi)
+- docs - create order request
+- test in Thunder Client
+
+### App.jsx
+
+- in App.jsx import action from CheckoutForm.jsx
+- pass store into the checkoutAction
+
+## CheckoutForm.jsx
+
+- Import Dependencies:
+
+  - Import `Form` and `redirect` from `'react-router-dom'`.
+  - Import `FormInput` and `SubmitBtn` from appropriate paths.
+  - Import other required utilities and actions.
+
+- Create an `action` function:
+
+  - The `action` function takes a `store` as a parameter and returns an asynchronous function that takes a `request` parameter.
+  - Inside the async function:
+    - Await `request.formData()` to get form data.
+    - Destructure the `name` and `address` properties from the form data using `Object.fromEntries(formData)`.
+    - Get the `user` from the Redux store using `store.getState().userState.user`.
+    - Get the `cartItems`, `orderTotal`, and `numItemsInCart` from the Redux store using `store.getState().cartState`.
+    - Create an `info` object containing the gathered information.
+    - Try to make a POST request to '/orders' with the `info` data and the user's token in the headers.
+    - If successful:
+      - Dispatch the `clearCart()` action using `store.dispatch(clearCart())` to clear the cart.
+      - Display a success toast message using `toast.success()` with the text 'order placed successfully'.
+      - Return `redirect('/orders')` to redirect the user to the orders page.
+    - If there's an error:
+      - Log the error.
+      - Get the error message from the response data or provide a default message.
+      - Display an error toast message using `toast.error()` with the error message.
+      - Return `null`.
+
+- Create a `CheckoutForm` component:
+
+  - Inside the component:
+    - Use the `Form` component from 'react-router-dom' to create a form.
+    - Display a heading for the shipping information.
+    - Use the `FormInput` component to create input fields for the first name and address.
+    - Use the `SubmitBtn` component to create a submit button with the text 'Place Your Order'.
+
+- Export the `CheckoutForm` component.
+
+## CheckoutForm
+
+App.jsx
+
+```js
+import { action as checkoutAction } from "./components/CheckoutForm";
+import { store } from "./store";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomeLayout />,
+    errorElement: <Error />,
+    children: [
+      {
+        path: "checkout",
+        element: <Checkout />,
+        loader: checkoutLoader(store),
+        action: checkoutAction(store),
+      },
+    ],
+  },
+]);
+```
+
+CheckoutForm.jsx
+
+```js
+import { Form, redirect } from "react-router-dom";
+import FormInput from "./FormInput";
+import SubmitBtn from "./SubmitBtn";
+import { customFetch, formatPrice } from "../utils";
+import { toast } from "react-toastify";
+import { clearCart } from "../features/cart/cartSlice";
+
+export const action =
+  (store) =>
+  async ({ request }) => {
+    const formData = await request.formData();
+    const { name, address } = Object.fromEntries(formData);
+    const user = store.getState().userState.user;
+    const { cartItems, orderTotal, numItemsInCart } =
+      store.getState().cartState;
+
+    const info = {
+      name,
+      address,
+      chargeTotal: orderTotal,
+      orderTotal: formatPrice(orderTotal),
+      cartItems,
+      numItemsInCart,
+    };
+    try {
+      const response = await customFetch.post(
+        "/orders",
+        { data: info },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      store.dispatch(clearCart());
+      toast.success("order placed successfully");
+      return redirect("/orders");
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        "there was an error placing your order";
+
+      toast.error(errorMessage);
+      return null;
+    }
+  };
+const CheckoutForm = () => {
+  return (
+    <Form method="POST" className="flex flex-col gap-y-4">
+      <h4 className="font-medium text-xl">Shipping Information</h4>
+      <FormInput label="first name" name="name" type="text" />
+      <FormInput label="address" name="address" type="text" />
+      <div className="mt-4">
+        <SubmitBtn text="Place Your Order" />
+      </div>
+    </Form>
+  );
+};
+export default CheckoutForm;
+```

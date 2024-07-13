@@ -11,7 +11,7 @@ export const loader = (store) => {
   return async () => {
     const user = store.getState().userState.user;
     if (!user) {
-      toast.error("Please login to access the checkout page.");
+      toast.warn("Please login to access the checkout page.");
       return redirect("/login");
     }
     return null;
