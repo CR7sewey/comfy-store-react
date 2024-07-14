@@ -54,6 +54,11 @@ export const action = (store) => {
         e?.response?.data?.error?.message ||
           "there was an error placing your order"
       );
+
+      if (e?.response?.status === 401 || 403) {
+        return redirect("/login");
+      }
+
       return e;
     }
   };
