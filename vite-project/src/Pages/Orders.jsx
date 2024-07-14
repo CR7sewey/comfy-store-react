@@ -1,7 +1,10 @@
 import React from "react";
 import { toast } from "react-toastify";
-import { redirect } from "react-router-dom";
+import { redirect, useLoaderData } from "react-router-dom";
 import comfFetch from "../utils/customAxios";
+import SectionTitle from "../Components/SectionTitle";
+import OrdersList from "../Components/OrdersList";
+import PaginationContainer from "../Components/PaginationContainer";
 
 export const loader = (store) => {
   return async ({ request }) => {
@@ -12,16 +15,16 @@ export const loader = (store) => {
     }
     const params = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
-    ]);
+    ]); // for when there is some pagination
     console.log(params, "params");
 
     try {
-      const response = await comfFetch.get("/orders", params, {
+      const response = await comfFetch.get("/orders", {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      return response.data;
+      return { orders: response.data.data, meta: response.data.meta };
     } catch (e) {
       toast.error(
         e?.response?.data?.error?.message ||
@@ -37,7 +40,18 @@ export const loader = (store) => {
 };
 
 const Orders = () => {
-  return <div></div>;
+  const { meta } = useLoaderData();
+  if (meta.pagination.total < 1) {
+    return <SectionTitle text="Please make an order" />;
+  }
+
+  return (
+    <>
+      <SectionTitle text="Your Orders" />
+      <OrdersList />
+      <PaginationContainer />
+    </>
+  );
 };
 
 export default Orders;

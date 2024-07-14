@@ -4276,3 +4276,132 @@ const Orders = () => {
 };
 export default Orders;
 ```
+
+## 51 - Render Orders
+
+### Orders.jsx
+
+- Import Dependencies:
+
+  - Import necessary components and hooks from your project's dependencies.
+
+- Define Component:
+
+  - Define a functional component named `Orders`.
+
+- Fetch Data:
+
+  - Use the `useLoaderData` hook to access data from the loader context.
+  - Check if the `meta.pagination.total` value is less than 1 to determine if there are no orders.
+
+- Conditional Rendering:
+
+  - If there are no orders, return a component, such as `<SectionTitle />`, with a message like 'Please make an order'.
+
+- Orders Rendering:
+
+  - If there are orders, return the following components:
+    - `<SectionTitle />` with the text 'Your Orders'.
+    - `<OrdersList />` component to display the list of orders.
+    - `<PaginationContainer />` component for handling pagination.
+
+- Export Component:
+  - Export the `Orders` component as the default export.
+
+### OrdersList.jsx
+
+- Import Dependencies:
+
+  - Import `useLoaderData` from `'react-router-dom'`.
+  - Import `day` and `advancedFormat` from `'dayjs'`.
+  - Extend dayjs with the `advancedFormat` plugin using `day.extend(advancedFormat)`.
+
+- Create the `OrdersList` component:
+
+  - Inside the component:
+    - Use the `useLoaderData()` hook to get data from loader data.
+    - Destructure `orders` and `meta` from the loaded data.
+    - Return the orders list interface:
+      - Display the total number of orders using the `meta.pagination.total` value.
+      - Create a table to display order information.
+      - Define table headings: Name, Address, Products, Cost, and Date.
+      - Use `.map()` to iterate over each order and generate table rows:
+        - Destructure relevant attributes from the `order` object.
+        - Format the `createdAt` date using dayjs to display in 'hh:mm a - MMM Do, YYYY' format.
+        - Return a table row with the extracted data.
+
+- Export the `OrdersList` component.
+
+## Render Orders
+
+Orders.jsx
+
+```js
+const Orders = () => {
+  const { meta } = useLoaderData();
+  if (meta.pagination.total < 1) {
+    return <SectionTitle text="Please make an order" />;
+  }
+  return (
+    <>
+      <SectionTitle text="Your Orders" />
+      <OrdersList />
+      <PaginationContainer />
+    </>
+  );
+};
+export default Orders;
+```
+
+OrdersList.jsx
+
+```js
+import { useLoaderData } from "react-router-dom";
+import day from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+day.extend(advancedFormat);
+
+const OrdersList = () => {
+  const { orders, meta } = useLoaderData();
+  return (
+    <div className="mt-8">
+      <h4 className="mb-4 capitalize">
+        total orders : {meta.pagination.total}
+      </h4>
+      <div className="overflow-x-auto ">
+        <table className="table table-zebra">
+          {/* head */}
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Products</th>
+              <th>Cost</th>
+              <th className="hidden sm:block">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => {
+              const id = order.id;
+              const { name, address, numItemsInCart, orderTotal, createdAt } =
+                order.attributes;
+
+              const date = day(createdAt).format("hh:mm a - MMM Do, YYYY ");
+              return (
+                <tr key={id}>
+                  <td>{name}</td>
+                  <td>{address}</td>
+                  <td>{numItemsInCart}</td>
+                  <td>{orderTotal}</td>
+                  <td className="hidden sm:block">{date}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+export default OrdersList;
+```
