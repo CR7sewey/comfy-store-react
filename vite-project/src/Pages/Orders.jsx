@@ -5,6 +5,7 @@ import comfFetch from "../utils/customAxios";
 import SectionTitle from "../Components/SectionTitle";
 import OrdersList from "../Components/OrdersList";
 import PaginationContainer from "../Components/PaginationContainer";
+import ComplexPaginationContainer from "../Components/ComplexPaginationContainer";
 
 export const loader = (store) => {
   return async ({ request }) => {
@@ -19,7 +20,7 @@ export const loader = (store) => {
     console.log(params, "params");
 
     try {
-      const response = await comfFetch.get("/orders", {
+      const response = await comfFetch.get("/orders", params, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -49,7 +50,7 @@ const Orders = () => {
     <>
       <SectionTitle text="Your Orders" />
       <OrdersList />
-      <PaginationContainer />
+      <ComplexPaginationContainer />
     </>
   );
 };
