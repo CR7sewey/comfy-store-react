@@ -4151,3 +4151,128 @@ const CheckoutForm = () => {
 };
 export default CheckoutForm;
 ```
+
+## 48 - Auth Error
+
+- handle auth errors
+- check for response.status
+  - if status === 401 redirect to login
+
+## Auth Error
+
+CheckoutForm.jsx
+
+```js
+
+ catch (error) {
+  console.log(error);
+  const errorMessage =
+    error?.response?.data?.error?.message ||
+    'there was an error placing your order';
+  toast.error(errorMessage);
+  if (error?.response?.status === 401 || 403) return redirect('/login');
+
+  return null;
+}
+```
+
+## 50 - Orders Page Setup
+
+- create components/OrdersList.jsx (export)
+- create loader (import/setup in App.jsx and provide store)
+- restrict access to page
+- make a request to get all users
+- grab all the query params
+- return orders and meta
+
+### Orders.jsx
+
+1. **Import Dependencies:**
+
+   - Import the required modules and components from 'react-router-dom', 'react-toastify', and other custom files.
+
+2. **Define Loader Function:**
+
+   - Create a loader function that takes the `store` parameter and an object with a `request` property.
+   - Within the loader function:
+     - Retrieve the user information from the Redux store.
+     - Check if the user is logged in. If not, display a warning toast and redirect to the login page.
+     - Parse query parameters from the URL.
+     - Use the `customFetch` utility to make a GET request to the '/orders' endpoint.
+     - Handle successful responses by returning the fetched orders data and meta information.
+     - Handle errors by displaying appropriate error messages using toast and optionally redirecting if unauthorized.
+     - Return `null` if an error occurs.
+
+3. **Define Orders Component:**
+
+   - Create a functional component named `Orders`.
+   - Within the component:
+     - Return JSX that displays a heading element with the text "orders".
+
+4. **Export Loader Function:**
+
+   - Export the defined loader function.
+
+5. **Export Orders Component:**
+   - Export the `Orders` component as the default export of the module.
+
+## Orders Page Setup
+
+App.jsx
+
+```js
+import { loader as ordersLoader } from './pages/Orders';
+
+{
+  path: 'orders',
+  element: <Orders />,
+  loader: ordersLoader(store),
+},
+```
+
+Orders.jsx
+
+```js
+import { redirect, useLoaderData } from "react-router-dom";
+import { toast } from "react-toastify";
+import { customFetch } from "../utils";
+import { OrdersList, PaginationContainer, SectionTitle } from "../components";
+
+export const loader =
+  (store) =>
+  async ({ request }) => {
+    const user = store.getState().userState.user;
+
+    if (!user) {
+      toast.warn("You must be logged in to view orders");
+      return redirect("/login");
+    }
+    const params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
+    try {
+      const response = await customFetch.get("/orders", {
+        params,
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      return { orders: response.data.data, meta: response.data.meta };
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        "there was an error accessing your orders";
+
+      toast.error(errorMessage);
+      if (error?.response?.status === 401 || 403) return redirect("/login");
+
+      return null;
+    }
+  };
+const Orders = () => {
+  return <h1 className="text-3xl">orders</h1>;
+};
+export default Orders;
+```
