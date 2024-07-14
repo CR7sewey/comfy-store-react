@@ -4,7 +4,7 @@ import comfFetch from "../utils/customAxios";
 import { useLoaderData } from "react-router-dom";
 import FeaturedProducts from "../Components/FeaturedProducts";
 
-export const loader = async () => {
+export const loader = (client) => async () => {
   try {
     const data = await comfFetch.get("/products?featured=true");
     const products = data.data.data;

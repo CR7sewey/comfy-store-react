@@ -3,17 +3,19 @@ import Filters from "../Components/Filters";
 import ProductsContainer from "../Components/ProductsContainer";
 import PaginationContainer from "../Components/PaginationContainer";
 
-export const loader = async ({ request }) => {
-  const url = new URL(request.url);
-  // url.searchParams // object of type : URLSearchParams
-  console.log(url, url.searchParams);
-  const params = Object.fromEntries([...url.searchParams.entries()]); // .entries() -> [[a:1],[b:2]]
-  console.log(Object.entries(params));
-  const response = await comfFetch.get("/products", { params });
+export const loader = (client) => {
+  async ({ request }) => {
+    const url = new URL(request.url);
+    // url.searchParams // object of type : URLSearchParams
+    console.log(url, url.searchParams);
+    const params = Object.fromEntries([...url.searchParams.entries()]); // .entries() -> [[a:1],[b:2]]
+    console.log(Object.entries(params));
+    const response = await comfFetch.get("/products", { params });
 
-  const products = response.data.data;
-  const meta = response.data.meta;
-  return { products, meta, params };
+    const products = response.data.data;
+    const meta = response.data.meta;
+    return { products, meta, params };
+  };
 };
 
 /**

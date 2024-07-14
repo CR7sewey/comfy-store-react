@@ -6,13 +6,15 @@ import { generateAmountOptions } from "../utils";
 import { addItem } from "../features/cart/cartSlice";
 import { useDispatch } from "react-redux";
 
-export const loader = async ({ params }) => {
-  const { id } = params;
-  const data = await comfFetch.get(`/products/${id}`);
-  const product = data.data.data;
-  console.log(product);
-  return { product };
-};
+export const loader =
+  (client) =>
+  async ({ params }) => {
+    const { id } = params;
+    const data = await comfFetch.get(`/products/${id}`);
+    const product = data.data.data;
+    console.log(product);
+    return { product };
+  };
 
 const SingleProduct = () => {
   const dispatch = useDispatch();
