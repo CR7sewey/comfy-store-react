@@ -6,13 +6,14 @@ import comfFetch from "../utils/customAxios";
 import { formatPrice } from "../utils/useFunctions";
 import { clearCart } from "../features/cart/cartSlice";
 import { redirect } from "react-router-dom";
+import { QueryClient } from "@tanstack/react-query";
 
 const labs = [
   { label: "First Name", name: "firstname", type: "text" },
   { label: "Address", name: "address", type: "text" },
 ];
 
-export const action = (store) => {
+export const action = (store, queryClient) => {
   return async ({ request }) => {
     const dataForm = await request.formData(); // FormData Object
     const entries = [...dataForm.values()]; //.entries
@@ -46,6 +47,7 @@ export const action = (store) => {
         }
       );
 
+      queryClient.removeQueries(["orders"]);
       store.dispatch(clearCart());
       toast.success("order placed successfully");
       return redirect("/orders");

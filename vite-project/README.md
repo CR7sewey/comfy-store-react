@@ -4671,3 +4671,64 @@ const Orders = () => {
 };
 export default Orders;
 ```
+
+## 57 - Remove Queries
+
+- remove "orders" query in CheckoutForm and Header
+
+## 57 - Remove Queries
+
+CheckoutForm.jsx
+
+```js
+import { Form, redirect } from 'react-router-dom';
+import FormInput from './FormInput';
+import SubmitBtn from './SubmitBtn';
+import { customFetch, formatPrice } from '../utils';
+import { toast } from 'react-toastify';
+import { clearCart } from '../features/cart/cartSlice';
+
+export const action =
+  (store, queryClient) =>
+  async ({ request }) => {
+    ...
+    try {
+      const response = await customFetch.post(
+        '/orders',
+        { data: info },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      // remove query
+      queryClient.removeQueries(['orders']);
+      // rest of the code
+      store.dispatch(clearCart());
+      toast.success('order placed successfully');
+      return redirect('/orders');
+    } ...
+  };
+```
+
+Header.jsx
+
+```js
+
+import { useQueryClient } from '@tanstack/react-query';
+const Header = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userState.user);
+  const queryClient = useQueryClient();
+  const handleLogout = async () => {
+    navigate('/');
+    dispatch(logoutUser());
+    dispatch(clearCart());
+    queryClient.removeQueries();
+  };
+  ...
+}
+
+```
