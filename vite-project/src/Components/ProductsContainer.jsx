@@ -7,6 +7,8 @@ import { useLoaderData } from "react-router-dom";
 
 const ProductsContainer = () => {
   const { meta } = useLoaderData();
+  console.log("Products container", meta);
+
   const [grid, setGrid] = useState(true);
   const [list, setList] = useState(false);
 

@@ -7,7 +7,30 @@ import OrdersList from "../Components/OrdersList";
 import PaginationContainer from "../Components/PaginationContainer";
 import ComplexPaginationContainer from "../Components/ComplexPaginationContainer";
 
-export const loader = (store) => {
+const ordersQuery = (params, user) => {
+  return {
+    // check what is returning
+    queryKey: [
+      "orders",
+      params.page ? parseInt(params.page) : 1,
+      user.username,
+    ],
+    queryFn: async () => {
+      //const { id } = params;
+      const response = await comfFetch.get("/orders", params, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      return { orders: response.data.data, meta: response.data.meta };
+    }, // needs to return a promise
+    onError: (e) => {
+      console.log(e);
+    },
+  };
+};
+
+export const loader = (store, queryClient) => {
   return async ({ request }) => {
     const user = store.getState().userState.user;
     if (!user) {
@@ -18,14 +41,11 @@ export const loader = (store) => {
       ...new URL(request.url).searchParams.entries(),
     ]); // for when there is some pagination
     console.log(params, "params");
-
     try {
-      const response = await comfFetch.get("/orders", params, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      return { orders: response.data.data, meta: response.data.meta };
+      const { orders, meta } = await queryClient.ensureQueryData(
+        ordersQuery(params, user)
+      );
+      return { orders, meta };
     } catch (e) {
       toast.error(
         e?.response?.data?.error?.message ||
@@ -35,7 +55,6 @@ export const loader = (store) => {
       if (e?.response?.status === 401 || 403) {
         return redirect("/login");
       }
-      return e;
     }
   };
 };

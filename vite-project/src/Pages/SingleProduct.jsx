@@ -6,12 +6,29 @@ import { generateAmountOptions } from "../utils";
 import { addItem } from "../features/cart/cartSlice";
 import { useDispatch } from "react-redux";
 
+const searchSingleProduct = (params) => {
+  return {
+    // check what is returning
+    queryKey: ["singleProduct", params], // important bcs images string value doesnt change, so, only refetch/rerenders when search term changes
+    queryFn: async () => {
+      //const { id } = params;
+      const data = await comfFetch.get(`/products/${params}`);
+      const product = data.data.data;
+      return { product };
+    }, // needs to return a promise
+    onError: (error) => {
+      console.log(error);
+    },
+  };
+};
+
 export const loader =
-  (client) =>
+  (queryClient) =>
   async ({ params }) => {
     const { id } = params;
-    const data = await comfFetch.get(`/products/${id}`);
-    const product = data.data.data;
+    const { product } = await queryClient.ensureQueryData(
+      searchSingleProduct(id)
+    );
     console.log(product);
     return { product };
   };

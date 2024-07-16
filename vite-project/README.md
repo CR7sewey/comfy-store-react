@@ -4490,3 +4490,184 @@ export const loader = (queryClient) => async () => {
   return { products };
 };
 ```
+
+## 53 - Landing
+
+- setup react query and invoke in loader
+
+## Landing
+
+Landing.jsx
+
+```js
+const featuredProductsQuery = {
+  queryKey: ["featuredProducts"],
+  queryFn: () => customFetch(url),
+};
+
+export const loader = (queryClient) => async () => {
+  const response = await queryClient.ensureQueryData(featuredProductsQuery);
+  const products = response.data.data;
+  return { products };
+};
+```
+
+## 54 - Single Product
+
+- setup react query and invoke in loader
+
+## Single Product
+
+SingleProduct.jsx
+
+```js
+const singleProductQuery = (id) => {
+  return {
+    queryKey: ["singleProduct", id],
+    queryFn: () => customFetch.get(`/products/${id}`),
+  };
+};
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    const response = await queryClient.ensureQueryData(
+      singleProductQuery(params.id)
+    );
+    return { product: response.data.data };
+  };
+```
+
+## 55 - All Products
+
+- setup react query and invoke in loader
+
+## All Products
+
+Products.jsx
+
+```js
+const allProductsQuery = (queryParams) => {
+  const { search, category, company, sort, price, shipping, page } =
+    queryParams;
+
+  return {
+    queryKey: [
+      "products",
+      search ?? "",
+      category ?? "all",
+      company ?? "all",
+      sort ?? "a-z",
+      price ?? 100000,
+      shipping ?? false,
+      page ?? 1,
+    ],
+    queryFn: () =>
+      customFetch(url, {
+        params: queryParams,
+      }),
+  };
+};
+
+export const loader =
+  (queryClient) =>
+  async ({ request }) => {
+    const params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
+    const response = await queryClient.ensureQueryData(
+      allProductsQuery(params)
+    );
+
+    const products = response.data.data;
+    const meta = response.data.meta;
+
+    return { products, meta, params };
+  };
+```
+
+?? === This operator is known as the nullish coalescing operator in JavaScript. It is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined, and otherwise returns its left-hand side operand.
+
+In simpler terms, the ?? operator is used to provide a default value for potentially null or undefined variables.
+
+## 55 - Orders
+
+setup react query and invoke in loader
+
+## Orders
+
+```js
+import { redirect, useLoaderData } from "react-router-dom";
+import { toast } from "react-toastify";
+import { customFetch } from "../utils";
+import {
+  OrdersList,
+  ComplexPaginationContainer,
+  SectionTitle,
+} from "../components";
+
+export const ordersQuery = (params, user) => {
+  return {
+    queryKey: [
+      "orders",
+      user.username,
+      params.page ? parseInt(params.page) : 1,
+    ],
+    queryFn: () =>
+      customFetch.get("/orders", {
+        params,
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }),
+  };
+};
+
+export const loader =
+  (store, queryClient) =>
+  async ({ request }) => {
+    const user = store.getState().userState.user;
+
+    if (!user) {
+      toast.warn("You must be logged in to view orders");
+      return redirect("/login");
+    }
+    const params = Object.fromEntries([
+      ...new URL(request.url).searchParams.entries(),
+    ]);
+    try {
+      const response = await queryClient.ensureQueryData(
+        ordersQuery(params, user)
+      );
+
+      return {
+        orders: response.data.data,
+        meta: response.data.meta,
+      };
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        "there was an error accessing your orders";
+
+      toast.error(errorMessage);
+      if (error?.response?.status === 401 || 403) return redirect("/login");
+      return null;
+    }
+  };
+const Orders = () => {
+  const { meta } = useLoaderData();
+
+  if (meta.pagination.total < 1) {
+    return <SectionTitle text="Please make an order" />;
+  }
+  return (
+    <>
+      <SectionTitle text="Your Orders" />
+      <OrdersList />
+      <ComplexPaginationContainer />
+    </>
+  );
+};
+export default Orders;
+```
